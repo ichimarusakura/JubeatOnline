@@ -48,7 +48,8 @@ namespace jubeat_online {
 		bool is_expand;					//Šg‘åk¬•\¦‚·‚é‚©
 		double exrate;					//Šg‘åk¬”{—¦
 
-
+		unsigned char* size_str;
+		int load_result_;
 		std::mutex mtx;
 
 		//HANDLE hThread;
@@ -56,7 +57,7 @@ namespace jubeat_online {
 		unsigned int loaded_num_;
 		unsigned int success_num_;
 		bool is_loaded_;				//“Ç‚İ‚İŠ®—¹‚µ‚½‚©
-		void LoadData(int* dst, void* data, const long size);				//–{¿‚Ìƒ[ƒhŠÖ”
+		void LoadData(int* dst,const int length, FILE* fp, const unsigned char pass);				//–{¿‚Ìƒ[ƒhŠÖ”
 
 		
 		// *** “Ç‚İ‚İAÄ¶•”•ª ***

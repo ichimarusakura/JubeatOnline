@@ -14,7 +14,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	DxLib::SetWindowText("jubeat ONLINE");
 	DxLib::ChangeWindowMode(true);
 	DxLib::SetGraphMode(1080, 1920, 32);
-	DxLib::WaitVSync(FALSE);
+	DxLib::SetMultiThreadFlag(TRUE);
+	DxLib::WaitVSync(TRUE);
+//	SetChangeScreenModeGraphicsSystemResetFlag(
 	DxLib::SetWindowPosition(1910, -640);
 	if (DxLib::DxLib_Init() == -1)
 	{
@@ -23,9 +25,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	DxLib::SetDrawScreen(DX_SCREEN_BACK);
 
+
+
 	jubeat_online::ImageSequence n;
 	int t = GetNowCount();
-	int res = n.LoadSequence(&n, "media\\button.isf");
+	int res = n.LoadSequence(&n, "media\\clear.isf");
 	t = GetNowCount() - t;
 	
 
@@ -41,10 +45,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//WaitForSingleObject(hHandle, INFINITE);
 
 
-	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0) {
+	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0) {/*
 		ClsDrawScreen();
 		clsDx();
-		printfDx("\n\n\n%d/%d", n.success_num_, n.loaded_num_);
+		//printfDx("\n\n\n%d/%d", n.success_num_, n.loaded_num_);
 		DxLib::DrawBox(0, 0, 30, 5, GetColor(255, 255, 255), true);
 		DxLib::DrawBox(0, 0, 5, 30, GetColor(255, 255, 255), true);
 
@@ -59,7 +63,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		DrawCircle((int)(sin(GetNowCount() / 2000.0f) * 200 + 500), (int)(cos(GetNowCount() / 500.0f) * 300 + 500), (int)(sin(GetNowCount() / 1000.0f) * 200 + 220), GetColor(255, 255, 0), true);
 
-		ScreenFlip();
+		ScreenFlip();*/
+		WaitKey();
 
 	}
 

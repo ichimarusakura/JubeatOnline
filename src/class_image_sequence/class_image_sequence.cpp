@@ -15,22 +15,114 @@
 #include <thread>
 #include <exception>
 
-void jubeat_online::ImageSequence::LoadData(int* dst,void* data,const long size) {
+std::mutex b;
+void AAA(int *dst, void* data, long size,std::mutex* a) {
+
+	std::lock_guard<std::mutex> lock(b);
 	try {
-		*dst = CreateGraphFromMem(data, (int)size);
+		*dst = CreateGraphFromMem(data, (int)size,NULL,0,0,0);
+		//CreateGra
 	}
 	catch (std::exception &ex) {
 		std::cerr << ex.what() << std::endl;
 	}
+}
+
+void jubeat_online::ImageSequence::LoadData(int* dst, const int length,FILE* fp,const unsigned char pass) {
+
 	std::lock_guard<std::mutex> lock(mtx);
-	free(data);
-	loaded_num_++;
-	if (*dst != -1) {
-		success_num_++;
+	unsigned int loaded = 0;	//読み込みが完了したフレーム数
+	for (loaded = 0; loaded < all_image_frame_; loaded++) {
+
+
+		//ループに入った後失敗した場合、画像のメモリ解放もしなければならない
+		//読み込まれた画像はloaded枚となる
+
+		//ファイル長を取得
+		long size = 0;
+
+		//ファイルサイズ格納用配列確保（動的）
+		//char* size_str = new char[length];
+		if (size_str == NULL) {
+			load_result_ = -4;
+			break;
+		}
+		else do {
+
+			//読み込み（サイズ）
+			if (fread_s(size_str, length, 1, length, fp) < length) {
+				load_result_ = -2;
+				break;
+			}
+
+			for (int i = 0; i < length; i++) {
+				long t = (0x000000ff & size_str[i]);
+				t <<= 8 * i;
+				size |= t;
+			}
+
+			//データ本体を持ってくる領域確保
+			//mtx.lock();
+			unsigned char* ndata = (unsigned char*)malloc(sizeof(unsigned char) * size);
+			//mtx.unlock();
+			if (ndata == NULL) {
+				load_result_ = -4;
+				break;
+			}
+			else do {
+
+				//ファイルを読み取る
+				if (fread_s(ndata, sizeof(char) * size, 1, size, fp) < (size_t)size) {
+					load_result_ = -2;
+					break;
+				}
+
+				for (int i = 0; i < size; i++) {
+					//解凍作業
+					ndata[i] ^= pass;
+				}
+
+
+
+
+				try {
+					//std::thread t2(AAA,  &images_[loaded], ndata, size,&mtx);
+					//t2.join();
+					dst[loaded] = CreateGraphFromMem(ndata, (int)size);
+				}
+				catch (std::exception &ex) {
+					std::cerr << ex.what() << std::endl;
+					load_result_ = -5;
+					break;
+				}
+				
+
+				//mtx.lock();
+				loaded_num_++;
+				if (dst[loaded] != -1) {
+					success_num_++;
+				}
+				else {
+					success_num_ = success_num_ * 1;
+				}
+				//mtx.unlock();
+
+			} while (0);
+			free(ndata);
+
+
+		} while (0);
+
+
+	}//end of for
+	if (load_result_ != 0) {
+		//エラーが発生した場合の読み込んだ画像に対する開放処理
+		for (unsigned int i = 0; i < loaded; i++) DeleteGraph(images_[i]);
+
 	}
-	else {
-		success_num_ = success_num_ * 1;
-	}
+
+	fclose(fp);
+
 }
 
 
@@ -61,10 +153,6 @@ int jubeat_online::ImageSequence::LoadSequence(jubeat_online::ImageSequence* me,
 	}
 
 
-	FILE* fw;
-	if (fopen_s(&fw, "dst.bin", "wb") != 0) {
-		return -1;
-	}
 
 	unsigned char type = 0x00, pass = 0x00, length = 0x00, fps = 0x00;
 
@@ -92,88 +180,26 @@ int jubeat_online::ImageSequence::LoadSequence(jubeat_online::ImageSequence* me,
 			t <<= 8 * i;
 			all_image_frame_ |= t;
 		}
-		unsigned char* size_str = new unsigned char[length];
+		size_str = new unsigned char[length];
+
 		//画像フレーム格納領域
-		images_ = new int[all_image_frame_];
+		images_ = (int*)malloc(sizeof(int) * all_image_frame_);
 		if (images_ == NULL) {
 			ret = -4;
 			break;
 		}
 		else do {
 
-			unsigned int loaded = 0;	//読み込みが完了したフレーム数
-			for (loaded = 0; loaded < all_image_frame_; loaded++) {
 
-				//ループに入った後失敗した場合、画像のメモリ解放もしなければならない
-				//読み込まれた画像はloaded枚となる
-
-				//ファイル長を取得
-				long size = 0;
-
-				//ファイルサイズ格納用配列確保（動的）
-				//char* size_str = new char[length];
-				if (size_str == NULL) {
-					ret = -4;
-					break;
-				}
-				else do {
-
-					//読み込み（サイズ）
-					if (fread_s(size_str, length, 1, length, fp) < length) {
-						ret = -2;
-						break;
-					}
-
-					for (int i = 0; i < length; i++) {
-						long t = (0x000000ff & size_str[i]);
-						t <<= 8 * i;
-						size |= t;
-					}
-
-					//データ本体を持ってくる領域確保
-					unsigned char* ndata = (unsigned char*)malloc(sizeof(unsigned char) * size);
-					if (ndata == NULL) {
-						ret = -4;
-						break;
-					}
-					else do {
-
-						//ファイルを読み取る
-						if (fread_s(ndata, sizeof(char) * size, 1, size, fp) < (size_t)size) {
-							ret = -2;
-							break;
-						}
-
-						for (int i = 0; i < size; i++) {
-							//解凍作業
-							ndata[i] ^= pass;
-						}
-
-						try {
-							std::thread t1(&ImageSequence::LoadData,this, &images_[loaded], ndata, size);
-							t1.detach();
-						}
-						catch (std::exception &ex) {
-							std::cerr << ex.what() << std::endl;
-						}
-						//LoadData(&images_[loaded], data, &size);
-						/*if ((images_[loaded] = CreateGraphFromMem(data, size)) == -1) {
-						//画像が読み込めなかった場合
-						ret = -1;
-						break;
-						}*/
-					} while (0);
-
-
-				} while (0);
-
-
-			}//end of for
-			if (ret != 0) {
-				//エラーが発生した場合の読み込んだ画像に対する開放処理
-				for (unsigned int i = 0; i < loaded; i++) DeleteGraph(images_[i]);
-
+			try {
+				std::thread t1(&ImageSequence::LoadData, this, images_, length,fp,pass);
+				t1.detach();
 			}
+			catch (std::exception &ex) {
+				std::cerr << ex.what() << std::endl;
+			}
+
+			//--------
 
 			//if (loaded != all_image_frame_) return -2;	//整合性なし
 
