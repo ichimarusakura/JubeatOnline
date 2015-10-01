@@ -52,7 +52,7 @@ int jubeatOnline::c_ImageSequence::LoadSequence(const char * filename){
 	
 		unsigned char* data = new unsigned char[size + 1];
 
-		fgets(
+		//fgets(
 	}
 
 	
