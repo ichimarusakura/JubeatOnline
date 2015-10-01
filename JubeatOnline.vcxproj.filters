@@ -24,11 +24,11 @@
     <ClCompile Include="Main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\class_Marker\class_Marker.cpp">
-      <Filter>クラスライブラリ\Marker</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\class_ImageSequence\class_ImageSequence.cpp">
+    <ClCompile Include="src\class_ImageSequence\class_ImageSequence.cpp">
       <Filter>クラスライブラリ\ImageSequence</Filter>
+    </ClCompile>
+    <ClCompile Include="src\class_Marker\class_Marker.cpp">
+      <Filter>クラスライブラリ\Marker</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
