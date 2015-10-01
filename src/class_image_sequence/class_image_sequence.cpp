@@ -3,52 +3,44 @@
 //*			Programmed by white					*
 //***********************************************
 
-#include "ImageSequence.h"
+#include "image_sequence.h"
 
 #include "DxLib.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-
-int jubeatOnline::c_ImageSequence::LoadSequence(const char * filename){
-
+int jubeat_online::ImageSequence::LoadData(void) {
 	int ret = 0;
-
-	//シーケンス画像ファイルのファイル名の処理
-	//if (filename != NULL) SetSequenceFilename(filename);
-	//else if (filename_ == NULL) return -3;		//ファイル名を指定しろ
-	
-	//シーケンス画像を読み込む
-
 	//ファイルを開封
 	FILE* fp;
-	if (fopen_s(&fp, filename, "rb") != 0) {
+	if (fopen_s(&fp, filename_, "rb") != 0) {
 		//ファイルの開封に失敗
 		return -1;
 	}
 
 	unsigned char type = 0x00, pass = 0x00, length = 0x00, fps = 0x00;
-	
+
 	do {
 
 		//まず識別子の取得
 		if (fread_s(&type, sizeof(char), 1, 1, fp) < 1) { ret = -2; break; }	//ファイルが少なすぎる
 
-		//簡易パスワード
+																				//簡易パスワード
 		if (fread_s(&pass, sizeof(char), 1, 1, fp) < 1) { ret = -2; break; }	//ファイルが少なすぎる
 
-		//longバイト長さ
+																				//longバイト長さ
 		if (fread_s(&length, sizeof(char), 1, 1, fp) < 1) { ret = -2; break; }	//ファイルが少なすぎる
 
-		//フレームレート
+																				//フレームレート
 		if (fread_s(&fps, sizeof(char), 1, 1, fp) < 1) { ret = -2; break; }	//ファイルが少なすぎる
 		fps_ = static_cast<unsigned int>(fps);
 
 		//総フレーム数
 		char tm[2];
 		all_image_frame_ = 0;
-		if (fread_s(tm, sizeof(char)*2, 1, 2, fp) < 2) { ret = -2; break; }	//ファイルが少なすぎる
+		if (fread_s(tm, sizeof(char) * 2, 1, 2, fp) < 2) { ret = -2; break; }	//ファイルが少なすぎる
 		for (int i = 0; i < 2; i++) {
 			int t = (0x000000ff & tm[i]);
 			t <<= 8 * i;
@@ -60,14 +52,15 @@ int jubeatOnline::c_ImageSequence::LoadSequence(const char * filename){
 		if (images_ == NULL) {
 			ret = -4;
 			break;
-		}else do {
+		}
+		else do {
 
 			unsigned int loaded = 0;	//読み込みが完了したフレーム数
 			for (loaded = 0; loaded < all_image_frame_; loaded++) {
 
 				//ループに入った後失敗した場合、画像のメモリ解放もしなければならない
 				//読み込まれた画像はloaded枚となる
-				
+
 				//ファイル長を取得
 				long size = 0;
 
@@ -76,7 +69,8 @@ int jubeatOnline::c_ImageSequence::LoadSequence(const char * filename){
 				if (size_str == NULL) {
 					ret = -4;
 					break;
-				}else do {
+				}
+				else do {
 
 					//読み込み（サイズ）
 					if (fread_s(size_str, length, 1, length, fp) < length) {
@@ -116,11 +110,11 @@ int jubeatOnline::c_ImageSequence::LoadSequence(const char * filename){
 						}
 					} while (0);
 
-					delete [] data;
+					delete[] data;
 
 				} while (0);
 
-				delete [] size_str;
+				delete[] size_str;
 
 			}//end of for
 			if (ret != 0) {
@@ -142,9 +136,33 @@ int jubeatOnline::c_ImageSequence::LoadSequence(const char * filename){
 	} while (0);
 
 
-	if(ret == 0) is_loaded_ = true;
+	if (ret == 0) is_loaded_ = true;
 
 	return ret;	//成功
+
+}
+
+int jubeat_online::ImageSequence::LoadSequence(const char * filename){
+
+
+	//シーケンス画像ファイルのファイル名の処理
+	//if (filename != NULL) SetSequenceFilename(filename);
+	//else if (filename_ == NULL) return -3;		//ファイル名を指定しろ
+	
+	//TO DOこのSetSequenceを追加すること
+	//temporary
+	size_t leng = strlen(filename);
+	//if(filename_ == NULL)
+	filename_ = new char[leng + 1];
+	if (filename_ == NULL) return -4;
+
+	strcpy_s(filename_,leng + 1, filename);
+
+	//シーケンス画像を読み込む
+
+	int r = LoadData();
+
+	return r;
 }
 /*
 void jubeatOnline::c_ImageSequence::RepeatFlag(const bool flag)

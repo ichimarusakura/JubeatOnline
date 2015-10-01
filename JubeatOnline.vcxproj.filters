@@ -24,15 +24,15 @@
     <ClCompile Include="Main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\class_ImageSequence\class_ImageSequence.cpp">
+    <ClCompile Include="src\class_image_sequence\class_image_sequence.cpp">
       <Filter>クラスライブラリ\ImageSequence</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\class_ImageSequence\ImageSequence.h">
+    <ClInclude Include="src\class_image_sequence\image_sequence.h">
       <Filter>クラスライブラリ\ImageSequence</Filter>
     </ClInclude>
-    <ClInclude Include="src\class_Marker\Marker.h">
+    <ClInclude Include="src\class_marker\marker.h">
       <Filter>クラスライブラリ\Marker</Filter>
     </ClInclude>
   </ItemGroup>

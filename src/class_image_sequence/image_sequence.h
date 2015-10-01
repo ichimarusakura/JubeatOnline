@@ -13,7 +13,7 @@
 #define NULL 0
 #endif
 
-namespace jubeatOnline {
+namespace jubeat_online {
 
 	//c_ImageSequence関数について
 	//	シーケンス画像をもとにアニメーションを展開します。
@@ -23,7 +23,7 @@ namespace jubeatOnline {
 
 	/// <summary>シーケンス画像をもとにアニメーションを展開します。
 	/// このクラスで、シーケンスの画像のロードから描画まですべて行います。</summary>
-	class c_ImageSequence {
+	class ImageSequence {
 	private:
 		char* filename_;				//ファイル名格納
 
@@ -43,6 +43,9 @@ namespace jubeatOnline {
 
 		bool is_expand;					//拡大縮小表示するか
 		double exrate;					//拡大縮小倍率
+
+		int LoadData(void);				//本質のロード関数
+		static void* DoThread(void* obj);
 		
 	public:
 		
@@ -89,40 +92,40 @@ namespace jubeatOnline {
 
 		/// <summary>X座標の設定を行います</summary>
 		/// <param name='x'>新しく設定するX座標です</param>
-		void X(const int x);
+		void set_x(const int x);
 
 		/// <summary>X座標の取得を行います</summary>
 		/// <returns>int型X座標を返します</returns>
-		int X(void) const;
+		int x(void) const;
 
 
 		/// <summary>Y座標の設定を行います</summary>
 		/// <param name='x'>新しく設定するY座標です</param>
-		void Y(const int y);
+		void set_y(const int y);
 
 		/// <summary>Y座標の取得を行います</summary>
 		/// <returns>int型Y座標を返します</returns>
-		int Y(void);
+		int y(void) const;
 
 
 		/// <summary>ループ時のインポイントの設定を行います
 		/// リピートフラグが立っており、アウトポイントに達した場合、このフレームからリピートされます</summary>
 		/// <param name='frame'>インポイントとして設定するフレーム番号です</param>
-		void InPoint(const unsigned int frame);
+		void set_in_frame(const unsigned int frame);
 
 		/// <summary>ループ時のインポイントの取得を行います</summary>
 		/// <returns>unsigned int型でインポイントフレーム番号を返します</returns>
-		unsigned int InPoint(void) const;
+		unsigned int in_frame(void) const;
 
 
 		/// <summary>ループ時のアウトポイントの設定を行います
 		/// リピートフラグが立っており、アウトポイントに達した場合、インポイントフレームへリピートされます</summary>
 		/// <param name='frame'>アウトポイントとして設定するフレーム番号です</param>
-		void OutPoint(const unsigned int frame);
+		void set_out_frame(const unsigned int frame);
 
 		/// <summary>ループ時のアウトポイントの取得を行います</summary>
 		/// <returns>unsigned int型でアウトポイントフレーム番号を返します</returns>
-		unsigned int OutPoint(void) const;
+		unsigned int out_frame(void) const;
 		
 		/// <summary>ループ時のインポイントの初期化を行います。これを実行するとインポイントは先頭のフレームに設定されます</summary>
 		void InitInPoint(void);
@@ -133,17 +136,15 @@ namespace jubeatOnline {
 
 		/// <summary>リピートするかのフラグを設定します</summary>
 		/// <param name='flag'>リピートする場合はtrue、しない場合はfalseを指定</param>
-		void RepeatFlag(const bool flag);
+		void set_is_repeat(const bool flag);
 
 		/// <summary>リピートするかのフラグを取得します</summary>
 		/// <returns>リピート設定の場合true、リピートしない場合falseが返されます</returns>
-		bool RepeatFlag(void) const;
+		bool is_repeat(void) const;
 
 	};
 
 
-	typedef c_ImageSequence		ImageSequence;
-	typedef c_ImageSequence*	lpImageSequence;
 
 }
 
