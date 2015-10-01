@@ -56,7 +56,7 @@ namespace jubeat_online {
 		unsigned int loaded_num_;
 		unsigned int success_num_;
 		bool is_loaded_;				//読み込み完了したか
-		void LoadData(int* dst, const void* data, const long* size);				//本質のロード関数
+		void LoadData(int* dst, void* data, const long size);				//本質のロード関数
 
 		
 		// *** 読み込み、再生部分 ***

@@ -15,18 +15,21 @@
 #include <thread>
 #include <exception>
 
-void jubeat_online::ImageSequence::LoadData(int* dst,const void* data,const long* size) {
+void jubeat_online::ImageSequence::LoadData(int* dst,void* data,const long size) {
 	try {
-		*dst = CreateGraphFromMem(data, *size);
+		*dst = CreateGraphFromMem(data, (int)size);
 	}
 	catch (std::exception &ex) {
 		std::cerr << ex.what() << std::endl;
 	}
-
 	std::lock_guard<std::mutex> lock(mtx);
+	free(data);
 	loaded_num_++;
 	if (*dst != -1) {
 		success_num_++;
+	}
+	else {
+		success_num_ = success_num_ * 1;
 	}
 }
 
@@ -57,6 +60,12 @@ int jubeat_online::ImageSequence::LoadSequence(jubeat_online::ImageSequence* me,
 		ret = -1;
 	}
 
+
+	FILE* fw;
+	if (fopen_s(&fw, "dst.bin", "wb") != 0) {
+		return -1;
+	}
+
 	unsigned char type = 0x00, pass = 0x00, length = 0x00, fps = 0x00;
 
 	do {
@@ -83,7 +92,7 @@ int jubeat_online::ImageSequence::LoadSequence(jubeat_online::ImageSequence* me,
 			t <<= 8 * i;
 			all_image_frame_ |= t;
 		}
-
+		unsigned char* size_str = new unsigned char[length];
 		//画像フレーム格納領域
 		images_ = new int[all_image_frame_];
 		if (images_ == NULL) {
@@ -102,7 +111,7 @@ int jubeat_online::ImageSequence::LoadSequence(jubeat_online::ImageSequence* me,
 				long size = 0;
 
 				//ファイルサイズ格納用配列確保（動的）
-				char* size_str = new char[length];
+				//char* size_str = new char[length];
 				if (size_str == NULL) {
 					ret = -4;
 					break;
@@ -122,25 +131,26 @@ int jubeat_online::ImageSequence::LoadSequence(jubeat_online::ImageSequence* me,
 					}
 
 					//データ本体を持ってくる領域確保
-					unsigned char* data = new unsigned char[size];
-					if (data == NULL) {
+					unsigned char* ndata = (unsigned char*)malloc(sizeof(unsigned char) * size);
+					if (ndata == NULL) {
 						ret = -4;
 						break;
 					}
 					else do {
 
 						//ファイルを読み取る
-						if (fread_s(data, size, 1, size, fp) < size) {
+						if (fread_s(ndata, sizeof(char) * size, 1, size, fp) < (size_t)size) {
 							ret = -2;
 							break;
 						}
 
 						for (int i = 0; i < size; i++) {
 							//解凍作業
-							data[i] ^= pass;
+							ndata[i] ^= pass;
 						}
+
 						try {
-							std::thread t1(&ImageSequence::LoadData,this, &images_[loaded], data, &size);
+							std::thread t1(&ImageSequence::LoadData,this, &images_[loaded], ndata, size);
 							t1.detach();
 						}
 						catch (std::exception &ex) {
@@ -154,11 +164,9 @@ int jubeat_online::ImageSequence::LoadSequence(jubeat_online::ImageSequence* me,
 						}*/
 					} while (0);
 
-					delete[] data;
 
 				} while (0);
 
-				delete[] size_str;
 
 			}//end of for
 			if (ret != 0) {
@@ -174,8 +182,10 @@ int jubeat_online::ImageSequence::LoadSequence(jubeat_online::ImageSequence* me,
 
 		if (ret != 0) {
 			//エラーが発生した場合だけ、image_を開放する
-			delete[] images_;
+//			delete[] images_;
 		}
+
+		delete[] size_str;
 
 	} while (0);
 

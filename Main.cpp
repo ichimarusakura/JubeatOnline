@@ -25,7 +25,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	jubeat_online::ImageSequence n;
 	int t = GetNowCount();
-	int res = n.LoadSequence(&n, "media\\title.isf");
+	int res = n.LoadSequence(&n, "media\\button.isf");
 	t = GetNowCount() - t;
 	
 
