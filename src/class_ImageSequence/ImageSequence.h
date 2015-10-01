@@ -32,6 +32,8 @@ namespace jubeatOnline {
 		unsigned int now_frame_;		//再生中、もしくは一時停止中の現在のフレーム番号
 		unsigned int fps_;				//動画fps
 
+		bool is_loaded_;				//読み込み完了したか
+
 		bool is_repeat_;				//繰り返すか
 		unsigned int in_frame_;			//リピート用、先頭フレーム
 		unsigned int out_frame_;		//リピート用、最終フレーム
@@ -54,7 +56,7 @@ namespace jubeatOnline {
 		/// <summary>シーケンス画像を読み込みます。</summary>
 		/// <param name='filename'>シーケンス画像を独自の形式でまとめたファイルのパス付き名前。SetSequenceFilenameを呼び出している場合はNULL指定します。
 		/// ここでもファイル名を与えた場合は、こちらの情報を優先します</param>
-		/// <returns>成功:0 ロードに失敗:-1 ファイル形式不正:-2 ファイル名指定なし:-3</returns>
+		/// <returns>0:成功 -1:ロード失敗 -2:ファイル形式不正 -3:ファイル名指定なし</returns>
 		/// <remarks>指定された形式の詳細はImageSequence.txtを参照ください</remarks>
 		int LoadSequence(const char* filename = NULL);
 
