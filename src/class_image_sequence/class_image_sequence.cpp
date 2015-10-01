@@ -11,13 +11,50 @@
 #include <stdlib.h>
 #include <string.h>
 
-int jubeat_online::ImageSequence::LoadData(void) {
+#include <iostream>
+#include <thread>
+#include <exception>
+
+void jubeat_online::ImageSequence::LoadData(int* dst,const void* data,const long* size) {
+	try {
+		*dst = CreateGraphFromMem(data, *size);
+	}
+	catch (std::exception &ex) {
+		std::cerr << ex.what() << std::endl;
+	}
+
+	std::lock_guard<std::mutex> lock(mtx);
+	loaded_num_++;
+	if (*dst != -1) {
+		success_num_++;
+	}
+}
+
+
+int jubeat_online::ImageSequence::LoadSequence(jubeat_online::ImageSequence* me, const char * filename){
+
+
+	//シーケンス画像ファイルのファイル名の処理
+	//if (filename != NULL) SetSequenceFilename(filename);
+	//else if (filename_ == NULL) return -3;		//ファイル名を指定しろ
+	
+	//TO DOこのSetSequenceを追加すること
+	//temporary
+	size_t leng = strlen(filename);
+	//if(filename_ == NULL)
+	filename_ = new char[leng + 1];
+	if (filename_ == NULL) return -4;
+
+	strcpy_s(filename_,leng + 1, filename);
+
+	//シーケンス画像を読み込む
+
 	int ret = 0;
 	//ファイルを開封
 	FILE* fp;
 	if (fopen_s(&fp, filename_, "rb") != 0) {
 		//ファイルの開封に失敗
-		return -1;
+		ret = -1;
 	}
 
 	unsigned char type = 0x00, pass = 0x00, length = 0x00, fps = 0x00;
@@ -102,12 +139,19 @@ int jubeat_online::ImageSequence::LoadData(void) {
 							//解凍作業
 							data[i] ^= pass;
 						}
-
-						if ((images_[loaded] = CreateGraphFromMem(data, size)) == -1) {
-							//画像が読み込めなかった場合
-							ret = -1;
-							break;
+						try {
+							std::thread t1(&ImageSequence::LoadData,this, &images_[loaded], data, &size);
+							t1.detach();
 						}
+						catch (std::exception &ex) {
+							std::cerr << ex.what() << std::endl;
+						}
+						//LoadData(&images_[loaded], data, &size);
+						/*if ((images_[loaded] = CreateGraphFromMem(data, size)) == -1) {
+						//画像が読み込めなかった場合
+						ret = -1;
+						break;
+						}*/
 					} while (0);
 
 					delete[] data;
@@ -123,7 +167,7 @@ int jubeat_online::ImageSequence::LoadData(void) {
 
 			}
 
-			if (loaded != all_image_frame_) return -2;	//整合性なし
+			//if (loaded != all_image_frame_) return -2;	//整合性なし
 
 
 		} while (0);
@@ -140,29 +184,6 @@ int jubeat_online::ImageSequence::LoadData(void) {
 
 	return ret;	//成功
 
-}
-
-int jubeat_online::ImageSequence::LoadSequence(const char * filename){
-
-
-	//シーケンス画像ファイルのファイル名の処理
-	//if (filename != NULL) SetSequenceFilename(filename);
-	//else if (filename_ == NULL) return -3;		//ファイル名を指定しろ
-	
-	//TO DOこのSetSequenceを追加すること
-	//temporary
-	size_t leng = strlen(filename);
-	//if(filename_ == NULL)
-	filename_ = new char[leng + 1];
-	if (filename_ == NULL) return -4;
-
-	strcpy_s(filename_,leng + 1, filename);
-
-	//シーケンス画像を読み込む
-
-	int r = LoadData();
-
-	return r;
 }
 /*
 void jubeatOnline::c_ImageSequence::RepeatFlag(const bool flag)

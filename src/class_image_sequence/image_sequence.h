@@ -4,6 +4,8 @@
 //*		Programmed by ほわいと						*
 //***************************************************
 
+#include <mutex>
+
 
 #pragma once
 #ifndef JUBEAT_ONLINE_IMAGESEQUENCE_H_
@@ -14,6 +16,9 @@
 #endif
 
 namespace jubeat_online {
+
+	typedef void * HANDLE;
+
 
 	//c_ImageSequence関数について
 	//	シーケンス画像をもとにアニメーションを展開します。
@@ -32,7 +37,6 @@ namespace jubeat_online {
 		unsigned int now_frame_;		//再生中、もしくは一時停止中の現在のフレーム番号
 		unsigned int fps_;				//動画fps
 
-		bool is_loaded_;				//読み込み完了したか
 
 		bool is_repeat_;				//繰り返すか
 		unsigned int in_frame_;			//リピート用、先頭フレーム
@@ -44,10 +48,16 @@ namespace jubeat_online {
 		bool is_expand;					//拡大縮小表示するか
 		double exrate;					//拡大縮小倍率
 
-		int LoadData(void);				//本質のロード関数
-		static void* DoThread(void* obj);
-		
+
+		std::mutex mtx;
+
+		//HANDLE hThread;
 	public:
+		unsigned int loaded_num_;
+		unsigned int success_num_;
+		bool is_loaded_;				//読み込み完了したか
+		void LoadData(int* dst, const void* data, const long* size);				//本質のロード関数
+
 		
 		// *** 読み込み、再生部分 ***
 
@@ -61,7 +71,7 @@ namespace jubeat_online {
 		/// ここでもファイル名を与えた場合は、こちらの情報を優先します</param>
 		/// <returns>0:成功 -1:ロード失敗 -2:ファイル形式不正 -3:ファイル名指定なし</returns>
 		/// <remarks>指定された形式の詳細はImageSequence.txtを参照ください</remarks>
-		int LoadSequence(const char* filename = NULL);
+		int LoadSequence(ImageSequence* me, const char* filename = NULL);
 
 		/// <summary>シーケンス画像を整列配置画像から読み込みます。</summary>
 		/// <param name='all_framecount'>取り込む画像の総枚数</param>
