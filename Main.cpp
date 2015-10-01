@@ -17,8 +17,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	DxLib::DrawPixel(320, 240, GetColor(255, 255, 255));
 
-	jubeatOnline::ImageSequence n;
-	printfDx("%d",n.LoadSequence("media/clear.isf"));
 	ScreenFlip();
 
 
