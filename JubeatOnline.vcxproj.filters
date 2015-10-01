@@ -27,9 +27,6 @@
     <ClCompile Include="src\class_ImageSequence\class_ImageSequence.cpp">
       <Filter>クラスライブラリ\ImageSequence</Filter>
     </ClCompile>
-    <ClCompile Include="src\class_Marker\class_Marker.cpp">
-      <Filter>クラスライブラリ\Marker</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\class_ImageSequence\ImageSequence.h">
