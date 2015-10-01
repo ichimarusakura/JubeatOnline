@@ -161,6 +161,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Sources\class_ImageSequence\class_ImageSequence.cpp" />
+    <ClCompile Include="Sources\class_Marker\class_Marker.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\class_ImageSequence\ImageSequence.h" />
+    <ClInclude Include="src\class_Marker\Marker.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
