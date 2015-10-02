@@ -15,22 +15,12 @@
 #include <thread>
 #include <exception>
 
-std::mutex b;
-void AAA(int *dst, void* data, long size,std::mutex* a) {
 
-	std::lock_guard<std::mutex> lock(b);
-	try {
-		*dst = CreateGraphFromMem(data, (int)size,NULL,0,0,0);
-		//CreateGra
-	}
-	catch (std::exception &ex) {
-		std::cerr << ex.what() << std::endl;
-	}
-}
+
 
 void jubeat_online::ImageSequence::LoadData(int* dst, const int length,FILE* fp,const unsigned char pass) {
 
-	std::lock_guard<std::mutex> lock(mtx);
+
 	unsigned int loaded = 0;	//読み込みが完了したフレーム数
 	for (loaded = 0; loaded < all_image_frame_; loaded++) {
 
@@ -62,9 +52,8 @@ void jubeat_online::ImageSequence::LoadData(int* dst, const int length,FILE* fp,
 			}
 
 			//データ本体を持ってくる領域確保
-			//mtx.lock();
 			unsigned char* ndata = (unsigned char*)malloc(sizeof(unsigned char) * size);
-			//mtx.unlock();
+			files_[loaded] = ndata;
 			if (ndata == NULL) {
 				load_result_ = -4;
 				break;
@@ -86,8 +75,6 @@ void jubeat_online::ImageSequence::LoadData(int* dst, const int length,FILE* fp,
 
 
 				try {
-					//std::thread t2(AAA,  &images_[loaded], ndata, size,&mtx);
-					//t2.join();
 					dst[loaded] = CreateGraphFromMem(ndata, (int)size);
 				}
 				catch (std::exception &ex) {
@@ -97,18 +84,10 @@ void jubeat_online::ImageSequence::LoadData(int* dst, const int length,FILE* fp,
 				}
 				
 
-				//mtx.lock();
-				/*loaded_num_++;
-				if (dst[loaded] != -1) {
-					success_num_++;
-				}
-				else {
-					success_num_ = success_num_ * 1;
-				}*/
-				//mtx.unlock();
+				ProcessMessage();
 
 			} while (0);
-			free(ndata);
+			//free(ndata);
 
 
 		} while (0);
@@ -124,17 +103,7 @@ void jubeat_online::ImageSequence::LoadData(int* dst, const int length,FILE* fp,
 	fclose(fp);
 
 
-	SetUseASyncLoadFlag(TRUE);
-	while (GetASyncLoadNum() > 0) {
-		for (unsigned int i = 0; i < all_image_frame_; i++) {
-			if (CheckHandleASyncLoad(images_[i]) == FALSE)
-			{
-				loaded_num_++;
-				if (images_[i] != -1)
-					success_num_++;
-			}
-		}
-	}
+	is_loaded_ = true;
 
 
 }
@@ -143,12 +112,14 @@ void jubeat_online::ImageSequence::LoadData(int* dst, const int length,FILE* fp,
 int jubeat_online::ImageSequence::LoadSequence(jubeat_online::ImageSequence* me, const char * filename){
 
 
+	//
 	//シーケンス画像ファイルのファイル名の処理
 	//if (filename != NULL) SetSequenceFilename(filename);
 	//else if (filename_ == NULL) return -3;		//ファイル名を指定しろ
 	
 	//TO DOこのSetSequenceを追加すること
 	//temporary
+	is_loaded_ = false;
 	size_t leng = strlen(filename);
 	//if(filename_ == NULL)
 	filename_ = new char[leng + 1];
@@ -198,31 +169,19 @@ int jubeat_online::ImageSequence::LoadSequence(jubeat_online::ImageSequence* me,
 
 		//画像フレーム格納領域
 		images_ = (int*)malloc(sizeof(int) * all_image_frame_);
-		if (images_ == NULL) {
+		files_ = (unsigned char**)malloc(sizeof(unsigned char*) * all_image_frame_);
+		if (images_ == NULL || files_ == NULL){
+			if (images_ != NULL) free(images_);
+			if (files_ != NULL) free(files_);
 			ret = -4;
 			break;
 		}
 		else do {
-			SetUseASyncLoadFlag(FALSE);
-			//LoadData(images_, length, fp, pass);
-			try {
-				std::thread t1(&ImageSequence::LoadData, this, images_, length,fp,pass);
-				t1.detach();
-			}
-			catch (std::exception &ex) {
-				std::cerr << ex.what() << std::endl;
-			}
-			//--------
 
-			//if (loaded != all_image_frame_) return -2;	//整合性なし
-
+			LoadData(images_, length, fp, pass);
 
 		} while (0);
 
-		if (ret != 0) {
-			//エラーが発生した場合だけ、image_を開放する
-//			delete[] images_;
-		}
 
 		delete[] size_str;
 
@@ -237,6 +196,35 @@ int jubeat_online::ImageSequence::LoadSequence(jubeat_online::ImageSequence* me,
 	return ret;	//成功
 
 }
+
+int jubeat_online::ImageSequence::WaitLoadComplete(void) {
+	if (is_loaded_ == false) return all_image_frame_;
+
+	int as = 0;
+		loaded_num_ = 0;
+		success_num_ = 0;
+		// 読み込みが終わっていたら画像を描画する
+		for (unsigned int i = 0; i < all_image_frame_; i++)
+		{
+			//ProcessMessage();
+			as = CheckHandleASyncLoad(images_[i]);
+			if(as == FALSE)
+			{
+				if (files_[i] != NULL) {
+					free(files_[i]);
+					files_[i] = NULL;
+				}
+				//DrawGraph(i * 32, 0, images_[i], TRUE);
+			}
+			else if (as == -1) {
+				return -1;
+			}
+		}
+	if(as > 0) return as;
+	//ロードが完了
+	return (success_num_ - loaded_num_);
+}
+
 /*
 void jubeatOnline::c_ImageSequence::RepeatFlag(const bool flag)
 {

@@ -32,6 +32,8 @@ namespace jubeat_online {
 	private:
 		char* filename_;				//ファイル名格納
 
+		unsigned char** files_;	//マジ！？
+
 		int* images_;					//シーケンス画像を保持
 		unsigned int all_image_frame_;	//全部のシーケンス画像枚数
 		unsigned int now_frame_;		//再生中、もしくは一時停止中の現在のフレーム番号
@@ -66,6 +68,10 @@ namespace jubeat_online {
 		/// この関数を呼び出した時点ではロード処理は発生しません</summary>
 		/// <param name='filename'>シーケンス画像を独自の　形式でまとめたファイルのパス付き名前</param>
 		void SetSequenceFilename(const char* filename);
+
+		/// <summary>シーケンス画像のロード完了を取得します。</summary>
+		/// <returns>読み込み待ちファイル数。0で完了、負の値でロードに失敗</returns>
+		int WaitLoadComplete(void);
 
 		/// <summary>シーケンス画像を読み込みます。</summary>
 		/// <param name='filename'>シーケンス画像を独自の形式でまとめたファイルのパス付き名前。SetSequenceFilenameを呼び出している場合はNULL指定します。
