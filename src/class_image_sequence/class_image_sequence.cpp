@@ -98,13 +98,13 @@ void jubeat_online::ImageSequence::LoadData(int* dst, const int length,FILE* fp,
 				
 
 				//mtx.lock();
-				loaded_num_++;
+				/*loaded_num_++;
 				if (dst[loaded] != -1) {
 					success_num_++;
 				}
 				else {
 					success_num_ = success_num_ * 1;
-				}
+				}*/
 				//mtx.unlock();
 
 			} while (0);
@@ -122,6 +122,20 @@ void jubeat_online::ImageSequence::LoadData(int* dst, const int length,FILE* fp,
 	}
 
 	fclose(fp);
+
+
+	SetUseASyncLoadFlag(TRUE);
+	while (GetASyncLoadNum() > 0) {
+		for (unsigned int i = 0; i < all_image_frame_; i++) {
+			if (CheckHandleASyncLoad(images_[i]) == FALSE)
+			{
+				loaded_num_++;
+				if (images_[i] != -1)
+					success_num_++;
+			}
+		}
+	}
+
 
 }
 
@@ -189,8 +203,8 @@ int jubeat_online::ImageSequence::LoadSequence(jubeat_online::ImageSequence* me,
 			break;
 		}
 		else do {
-
-
+			SetUseASyncLoadFlag(FALSE);
+			//LoadData(images_, length, fp, pass);
 			try {
 				std::thread t1(&ImageSequence::LoadData, this, images_, length,fp,pass);
 				t1.detach();
@@ -198,7 +212,6 @@ int jubeat_online::ImageSequence::LoadSequence(jubeat_online::ImageSequence* me,
 			catch (std::exception &ex) {
 				std::cerr << ex.what() << std::endl;
 			}
-
 			//--------
 
 			//if (loaded != all_image_frame_) return -2;	//®‡«‚È‚µ
@@ -216,7 +229,10 @@ int jubeat_online::ImageSequence::LoadSequence(jubeat_online::ImageSequence* me,
 	} while (0);
 
 
-	if (ret == 0) is_loaded_ = true;
+	if (ret == 0) {
+		is_loaded_ = true;
+		//‚·‚×‚Ä‚Ì“Ç‚Ýž‚Ý‚ªI‚í‚é‚Ü‚Å‘Ò‚Â
+	}
 
 	return ret;	//¬Œ÷
 
