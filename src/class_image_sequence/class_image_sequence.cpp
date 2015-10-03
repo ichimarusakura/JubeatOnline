@@ -14,7 +14,6 @@
 
 jubeat_online::ImageSequence::ImageSequence() {
 	filename_ = NULL;
-	files_ = NULL;
 	images_ = NULL;
 
 	all_image_frame_ = 0;
@@ -27,12 +26,12 @@ jubeat_online::ImageSequence::ImageSequence() {
 
 	x_ = 0;
 	y_ = 0;
-	started_time_ = 0;
-	is_expand = 0;
-	exrate = 1.0f;
+	is_expand_ = 0;
+	exrate_ = 1.0f;
+	is_play_ = false;
 
 	is_allocated_ = false;
-	failed_num_ = 0;
+	is_loaded_ = false;
 
 	load_result_ = ImageSequenceResult::LOAD_ERROR;
 
@@ -44,6 +43,12 @@ jubeat_online::ImageSequence::~ImageSequence() {
 
 
 void								jubeat_online::ImageSequence::LoadThread(void) {
+
+	//***********************************************************************
+	//関数名:(private)LoadThread
+	//説　明:別スレッドで連番画像の読み込みをします
+	//戻り値:void型。結果はload_result_に格納されます。
+	//***********************************************************************
 	
 	std::lock_guard<std::mutex> lock(mtx);
 
@@ -53,6 +58,7 @@ void								jubeat_online::ImageSequence::LoadThread(void) {
 	//シーケンス画像を読み込む
 	//ファイルを開封
 	FILE* fp;
+	//mtx.lock();
 	if (fopen_s(&fp, filename_, "rb") != 0) {
 		//ファイルの開封に失敗
 		ret = ImageSequenceResult::LOAD_ERROR;
@@ -182,10 +188,14 @@ void								jubeat_online::ImageSequence::LoadThread(void) {
 
 	if (ret == ImageSequenceResult::OK) {
 		is_loaded_ = true;
+		out_frame_ = all_image_frame_;
 	}
 
 	load_result_ = ret;
 	std::cout << "ImageSequenceスレッドを終了します" << filename_ << "\n";
+
+
+	//mtx.unlock();
 }
 
 jubeat_online::ImageSequenceResult	jubeat_online::ImageSequence::LoadSequence(const char * filename){
@@ -219,6 +229,7 @@ jubeat_online::ImageSequenceResult	jubeat_online::ImageSequence::LoadSequence(co
 	std::thread th(&jubeat_online::ImageSequence::LoadThread, this);
 	th.detach();
 
+	is_allocated_ = true;
 
 	return ret;
 }
@@ -252,50 +263,55 @@ int									jubeat_online::ImageSequence::WaitLoadComplete(void) {
 
 	//***********************************************************************
 	//関数名:WaitLoadComplete
-	//説　明:ロードが終わり次第、一回は呼ばなくてはなりません。
-	//		 LoadSequenceによる画像ロードのキューを消費しきったかどうか、
-	//		 ループで継続的に問い合わせてください。また、これと同時に
-	//		 ProcessMessage()もループで問い合わせてください。
-	//戻り値:int型で、0なら成功、正の値なら、そのフレーム分がまだ読み込めて
-	//		 いないということ、負の値なら読み込みに失敗した枚数分をマイナスで
-	//		 表示しています。
+	//説　明:ロードが終わったかどうか取得できます。
+	//戻り値:int型で、0なら成功、正の値なら、まだ読み込めていないということ、
+	//		 負の値なら読み込みに失敗した枚数分をマイナスで表示しています。
 	//***********************************************************************
 
 	//LoadSequence実行したか
 	if (!is_allocated_) return -1;
 	
-	if (is_loaded_) return failed_num_;
+	if (is_loaded_) {
+		if(load_result_ == ImageSequenceResult::OK) return 0;
+		else return -1;
+	}
+	return 1;
+}
 
-	int as = 0;
-	unsigned int loaded_num = 0;
-	failed_num_ = 0;
-	
-	// 読み込みが終わっていたら画像を描画する
-	for (unsigned int i = 0; i < all_image_frame_; i++) {
-	//	as = CheckHandleASyncLoad(images_[i]);
-		if (as == 0){
-			//読み込み専用のファイル格納メモリ
-			if (files_[i] != NULL) {
-				free(files_[i]);
-				files_[i] = NULL;
+int jubeat_online::ImageSequence::DrawSequence(const float x, const float y, sf::RenderTexture* screen_buffer, const unsigned int frame)
+{
+
+	x_ = x;
+	y_ = y;
+
+	//ロードは完了しているか
+	if (is_loaded_ == false) return -1;
+
+	//再生中か
+	if (is_play_) {
+		sf::Time t(started_time_.getElapsedTime());
+		now_frame_ = static_cast<int>(t.asSeconds() * 60.0f);
+		if (now_frame_ >= all_image_frame_ || now_frame_ >= out_frame_) {
+			if (is_repeat_ == true) {
+				//リピート処理
+				now_frame_ %= (out_frame_ - in_frame_);
 			}
-			loaded_num++;
+			else {
+				is_play_ = false;
+				now_frame_ = 0;
+			}
 		}
-		else if (as == -1) {
-			failed_num_--;
-		}
-	}
 
-	if (all_image_frame_ > loaded_num) return all_image_frame_ - loaded_num;
+		sf::Sprite graph(images_[now_frame_]);
+		graph.setOrigin(graph.getLocalBounds().width / 2.0f, graph.getLocalBounds().height / 2.0f);
+		graph.setPosition(x_, y_);
+		screen_buffer->draw(graph);
+
+
+	}
 	
-	//ロードが完了した場合
-	if (files_ != NULL) {
-		free(files_);
-		files_ = NULL;
-	}
 
-	is_loaded_ = true;
-	return failed_num_;
+	return 0;
 }
 
 void								jubeat_online::ImageSequence::DeleteSequence(void){
@@ -310,22 +326,13 @@ void								jubeat_online::ImageSequence::DeleteSequence(void){
 	if (is_allocated_ == false) return;
 	
 	if (images_ != NULL) {
-		for (unsigned int i = 0; i < all_image_frame_; i++) {
-	//		DeleteGraph(images_[i]);
-		}
-		free(images_);
+		delete[] images_;
 		images_ = NULL;
 	}
 	
-	if (files_ != NULL) {
-		for (unsigned int i = 0; i < all_image_frame_; i++) {
-			if(files_[i] != NULL) free(files_[i]);
-		}
-		free(files_);
-	}
 
 	if (filename_ != NULL) {
-		free(filename_);
+		delete[] filename_;
 		filename_ = NULL;
 	}
 
@@ -339,19 +346,17 @@ void								jubeat_online::ImageSequence::DeleteSequence(void){
 
 	x_ = 0;
 	y_ = 0;
-	started_time_ = 0;
-	is_expand = 0;
-	exrate = 1.0f;
+	is_expand_ = 0;
+	exrate_ = 1.0f;
 
 	is_allocated_ = false;
-	failed_num_ = 0;
 
 	is_allocated_ = false;
 	is_loaded_ = false;
 	
 }
 
-jubeat_online::ImageSequenceResult	jubeat_online::ImageSequence::PlaySequence(const int x, const int y, const unsigned int frame){
+jubeat_online::ImageSequenceResult	jubeat_online::ImageSequence::PlaySequence(const unsigned int frame){
 
 	//***********************************************************************
 	//関数名:PlaySequence
@@ -370,20 +375,23 @@ jubeat_online::ImageSequenceResult	jubeat_online::ImageSequence::PlaySequence(co
 
 	if (is_loaded_ == false) return ImageSequenceResult::LOAD_ERROR;
 
-	x_ = x;
-	y_ = y;
 
 	now_frame_ = frame;
 
-//	started_time_ = GetNowCount();
+	is_play_ = true;
+	started_frame_ = frame;
+	started_time_.restart();
 
+	
 	return ImageSequenceResult::OK;
 }
 
-
-
-/*
-void jubeatOnline::c_ImageSequence::RepeatFlag(const bool flag)
+void jubeat_online::ImageSequence::set_is_repeat(const bool flag)
 {
+	is_repeat_ = flag;
+}
 
-}*/
+bool jubeat_online::ImageSequence::is_repeat(void) const
+{
+	return is_repeat_;
+}

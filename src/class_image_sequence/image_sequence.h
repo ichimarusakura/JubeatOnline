@@ -42,8 +42,6 @@ namespace jubeat_online {
 	private:
 		char* filename_;				//ファイル名格納
 
-		unsigned char** files_;	//マジ！？
-
 		sf::Texture* images_;			//シーケンス画像を保持
 		unsigned int all_image_frame_;	//全部のシーケンス画像枚数
 		unsigned int now_frame_;		//再生中、もしくは一時停止中の現在のフレーム番号
@@ -54,16 +52,17 @@ namespace jubeat_online {
 		unsigned int in_frame_;			//リピート用、先頭フレーム
 		unsigned int out_frame_;		//リピート用、最終フレーム
 
-		int x_, y_;						//表示する座標
-		unsigned int started_time_;		//スタート時間(ms)
+		float x_, y_;						//表示する座標
+		sf::Clock started_time_;		//スタート時間(ms)
+		unsigned int started_frame_;
+		bool is_play_;
 
-		bool is_expand;					//拡大縮小表示するか
-		double exrate;					//拡大縮小倍率
+		bool is_expand_;					//拡大縮小表示するか
+		double exrate_;					//拡大縮小倍率
 		
 		bool is_loaded_;				//読み込み完了したか
 		bool is_allocated_;				//メモリの確保など
 		ImageSequenceResult load_result_;
-		int failed_num_;
 
 		std::mutex mtx;
 
@@ -103,21 +102,16 @@ namespace jubeat_online {
 		/// <remarks>指定された形式の詳細はImageSequence.txtを参照ください</remarks>
 		int LoadDivGraph(const int all_framecount, const int x_div, const int y_div, const int width, const int height, const char *filename = NULL);
 
-		/// <summary>シーケンス画像を動画として再生します</summary>
-		/// <param name='x'>描写するx座標をここで指定します</param>
-		/// <param name='y'>描写するy座標をここで指定します</param>
-		/// <param name='frame'>再生を開始するフレーム番号です。デフォルトは0フレームからです</param>
-		/// <returns>int型。成功した場合は0、再生に失敗した場合は-1を返します</returns>
-		ImageSequenceResult PlaySequence(const int x, const int y, const unsigned int frame = 0);
 
 		/// <summary>シーケンス画像を動画として再生します。この関数を呼ぶ前にx,y座標を指定しておく必要があります</summary>
 		/// <param name='frame'>再生を開始するフレーム番号です。デフォルトは0フレームからです</param>
 		/// <returns>int型。成功した場合は0、再生に失敗した場合は-1を返します</returns>
-		int PlaySequence(const unsigned int frame = 0);
+		ImageSequenceResult PlaySequence(const unsigned int frame = 0);
 
-		/// <summary>シーケンス画像を描写します。再生時も停止時も描写できます。</summary>
+		/// <summary>シーケンス画像を描写します。再生時に描写できます。</summary>
+		/// <param name='frame'>停止時に描写するフレーム番号です。再生時には無視されます</param>
 		/// <returns>int型。成功した場合はフレーム番号、再生に失敗した場合は-1を返します</returns>
-		int DrawSequence(const unsigned int frame = 0);
+		int DrawSequence(const float x, const float y, sf::RenderTexture* screen_buffer, const unsigned int frame = 0);
 
 		/// <summary>シーケンスの削除を行います。</summary>
 		void DeleteSequence(void);
