@@ -26,7 +26,6 @@ jubeat_online::ImageSequence::ImageSequence() {
 
 	x_ = 0;
 	y_ = 0;
-	is_expand_ = 0;
 	exrate_ = 1.0f;
 	is_play_ = false;
 
@@ -278,19 +277,30 @@ int									jubeat_online::ImageSequence::WaitLoadComplete(void) {
 	return 1;
 }
 
-int jubeat_online::ImageSequence::DrawSequence(const float x, const float y, sf::RenderTexture* screen_buffer, const unsigned int frame)
-{
 
+int jubeat_online::ImageSequence::DrawSequence(const float x, const float y, const float ex, sf::RenderTexture * screen_buffer, const unsigned int frame)
+{
+	exrate_ = ex;
+	return DrawSequence(x,y,screen_buffer,frame);
+}
+
+int jubeat_online::ImageSequence::DrawSequence(const float x, const float y, sf::RenderTexture * screen_buffer, const unsigned int frame)
+{
 	x_ = x;
 	y_ = y;
+	return DrawSequence(screen_buffer,frame);
+}
 
+int jubeat_online::ImageSequence::DrawSequence(sf::RenderTexture* screen_buffer, const unsigned int frame)
+{
+	
 	//ロードは完了しているか
 	if (is_loaded_ == false) return -1;
 
 	//再生中か
 	if (is_play_) {
 		sf::Time t(started_time_.getElapsedTime());
-		now_frame_ = static_cast<int>(t.asSeconds() * 60.0f);
+		now_frame_ = static_cast<int>(t.asSeconds() * fps_);
 		if (now_frame_ >= all_image_frame_ || now_frame_ >= out_frame_) {
 			if (is_repeat_ == true) {
 				//リピート処理
@@ -305,6 +315,7 @@ int jubeat_online::ImageSequence::DrawSequence(const float x, const float y, sf:
 		sf::Sprite graph(images_[now_frame_]);
 		graph.setOrigin(graph.getLocalBounds().width / 2.0f, graph.getLocalBounds().height / 2.0f);
 		graph.setPosition(x_, y_);
+		graph.setScale(exrate_, exrate_);
 		screen_buffer->draw(graph);
 
 
@@ -346,7 +357,6 @@ void								jubeat_online::ImageSequence::DeleteSequence(void){
 
 	x_ = 0;
 	y_ = 0;
-	is_expand_ = 0;
 	exrate_ = 1.0f;
 
 	is_allocated_ = false;
@@ -354,6 +364,61 @@ void								jubeat_online::ImageSequence::DeleteSequence(void){
 	is_allocated_ = false;
 	is_loaded_ = false;
 	
+}
+
+void jubeat_online::ImageSequence::set_x(const int x)
+{
+	x_ = x;
+}
+
+int jubeat_online::ImageSequence::x(void) const
+{
+	return x_;
+}
+
+void jubeat_online::ImageSequence::set_y(const int y)
+{
+	y_ = y;
+}
+
+int jubeat_online::ImageSequence::y(void) const
+{
+	return y_;
+}
+
+void jubeat_online::ImageSequence::set_in_frame(const unsigned int frame)
+{
+	in_frame_ = frame;
+}
+
+unsigned int jubeat_online::ImageSequence::in_frame(void) const
+{
+	return in_frame_;
+}
+
+void jubeat_online::ImageSequence::set_out_frame(const unsigned int frame)
+{
+	out_frame_ = frame;
+}
+
+unsigned int jubeat_online::ImageSequence::out_frame(void) const
+{
+	return out_frame_;
+}
+
+void jubeat_online::ImageSequence::InitInPoint(void)
+{
+	set_in_frame(0);
+}
+
+void jubeat_online::ImageSequence::InitOutPoint(void)
+{
+	set_out_frame(all_image_frame_);
+}
+
+int jubeat_online::ImageSequence::LoadDivGraph(const int all_framecount, const int x_div, const int y_div, const int width, const int height, const char * filename)
+{
+	return 0;
 }
 
 jubeat_online::ImageSequenceResult	jubeat_online::ImageSequence::PlaySequence(const unsigned int frame){

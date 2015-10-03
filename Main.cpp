@@ -34,7 +34,7 @@ int main(void){
 	Gr.setSmooth(true);
 
 	jubeat_online::ImageSequence is;
-	is.LoadSequence("media\\clear.isf");
+	is.LoadSequence("media\\wtjp.isf");
 	is.set_is_repeat(true);
 	
 	int t = 0;
@@ -63,7 +63,7 @@ int main(void){
 		}
 		
 		if (t == 1) {
-			is.DrawSequence(384, 660, &ScreenBuf);
+			is.DrawSequence(384, 200,0.7f, &ScreenBuf);
 		}
 
 		ScreenBuf.display();    //バッファ画面をアップデート

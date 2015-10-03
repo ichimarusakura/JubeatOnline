@@ -57,8 +57,7 @@ namespace jubeat_online {
 		unsigned int started_frame_;
 		bool is_play_;
 
-		bool is_expand_;					//拡大縮小表示するか
-		double exrate_;					//拡大縮小倍率
+		float exrate_;					//拡大縮小倍率
 		
 		bool is_loaded_;				//読み込み完了したか
 		bool is_allocated_;				//メモリの確保など
@@ -109,9 +108,26 @@ namespace jubeat_online {
 		ImageSequenceResult PlaySequence(const unsigned int frame = 0);
 
 		/// <summary>シーケンス画像を描写します。再生時に描写できます。</summary>
+		/// <param name='x'>表示するx座標</param>
+		/// <param name='y'>表示するy座標</param>
+		/// <param name='ex'>拡大率</param>
+		/// <param name='screen_buffer'>スクリーン描写用バッファ</param>
+		/// <param name='frame'>停止時に描写するフレーム番号です。再生時には無視されます</param>
+		/// <returns>int型。成功した場合はフレーム番号、再生に失敗した場合は-1を返します</returns>
+		int DrawSequence(const float x, const float y, const float ex, sf::RenderTexture* screen_buffer, const unsigned int frame = 0);
+
+		/// <summary>シーケンス画像を描写します。再生時に描写できます。</summary>
+		/// <param name='ex'>拡大率</param>
+		/// <param name='screen_buffer'>スクリーン描写用バッファ</param>
 		/// <param name='frame'>停止時に描写するフレーム番号です。再生時には無視されます</param>
 		/// <returns>int型。成功した場合はフレーム番号、再生に失敗した場合は-1を返します</returns>
 		int DrawSequence(const float x, const float y, sf::RenderTexture* screen_buffer, const unsigned int frame = 0);
+
+		/// <summary>シーケンス画像を描写します。再生時に描写できます。</summary>
+		/// <param name='frame'>停止時に描写するフレーム番号です。再生時には無視されます</param>
+		/// <returns>int型。成功した場合はフレーム番号、再生に失敗した場合は-1を返します</returns>
+		int DrawSequence(sf::RenderTexture* screen_buffer, const unsigned int frame = 0);
+
 
 		/// <summary>シーケンスの削除を行います。</summary>
 		void DeleteSequence(void);
@@ -171,8 +187,6 @@ namespace jubeat_online {
 		/// <returns>リピート設定の場合true、リピートしない場合falseが返されます</returns>
 		bool is_repeat(void) const;
 
-
-		
 
 	};
 
