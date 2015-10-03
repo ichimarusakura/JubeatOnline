@@ -168,6 +168,9 @@
     <ClInclude Include="src\class_image_sequence\image_sequence.h" />
     <ClInclude Include="src\class_marker\marker.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="isfファイルについて_ImageSequence.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -36,4 +36,9 @@
       <Filter>クラスライブラリ\Marker</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="isfファイルについて_ImageSequence.txt">
+      <Filter>クラスライブラリ\ImageSequence</Filter>
+    </Text>
+  </ItemGroup>
 </Project>

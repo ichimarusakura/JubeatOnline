@@ -26,6 +26,15 @@ namespace jubeat_online {
 	//	ただし、シーケンス画像を動画として再生するプログラムですので
 	//	座標や表示状態などは外部から指定する必要があります。
 
+	/// <summary>ImageSequenceクラスの、結果を戻り値とする関数の、戻り値の型</summary>
+	enum ImageSequenceResult {
+		OK = 0,
+		LOAD_ERROR = -1,
+		MALFORMED_FILE = -2,
+		NULL_FILEPATH = -3,
+		OUT_OF_MEMORY = -4,
+	};
+
 	/// <summary>シーケンス画像をもとにアニメーションを展開します。
 	/// このクラスで、シーケンスの画像のロードから描画まですべて行います。</summary>
 	class ImageSequence {
@@ -49,25 +58,21 @@ namespace jubeat_online {
 
 		bool is_expand;					//拡大縮小表示するか
 		double exrate;					//拡大縮小倍率
-
-		unsigned char* size_str;
-		int load_result_;
-		std::mutex mtx;
-
-		//HANDLE hThread;
-	public:
-		unsigned int loaded_num_;
-		unsigned int success_num_;
+		
 		bool is_loaded_;				//読み込み完了したか
-		void LoadData(int* dst,const int length, FILE* fp, const unsigned char pass);				//本質のロード関数
+		bool is_allocated_;				//メモリの確保など
+		int failed_num_;
 
+	public:
+		ImageSequence();
+		~ImageSequence();
 		
 		// *** 読み込み、再生部分 ***
 
 		/// <summary>シーケンス画像のファイルパスを登録します。
 		/// この関数を呼び出した時点ではロード処理は発生しません</summary>
 		/// <param name='filename'>シーケンス画像を独自の　形式でまとめたファイルのパス付き名前</param>
-		void SetSequenceFilename(const char* filename);
+		jubeat_online::ImageSequenceResult SetSequenceFilename(const char* filename);
 
 		/// <summary>シーケンス画像のロード完了を取得します。</summary>
 		/// <returns>読み込み待ちファイル数。0で完了、負の値でロードに失敗</returns>
@@ -78,7 +83,7 @@ namespace jubeat_online {
 		/// ここでもファイル名を与えた場合は、こちらの情報を優先します</param>
 		/// <returns>0:成功 -1:ロード失敗 -2:ファイル形式不正 -3:ファイル名指定なし</returns>
 		/// <remarks>指定された形式の詳細はImageSequence.txtを参照ください</remarks>
-		int LoadSequence(ImageSequence* me, const char* filename = NULL);
+		ImageSequenceResult LoadSequence(const char* filename = NULL);
 
 		/// <summary>シーケンス画像を整列配置画像から読み込みます。</summary>
 		/// <param name='all_framecount'>取り込む画像の総枚数</param>
@@ -158,6 +163,11 @@ namespace jubeat_online {
 		/// <summary>リピートするかのフラグを取得します</summary>
 		/// <returns>リピート設定の場合true、リピートしない場合falseが返されます</returns>
 		bool is_repeat(void) const;
+
+
+		/// <summary>シーケンスの削除</summary>
+		/// <returns>結果を返します</returns>
+		ImageSequenceResult DeleteSequence(void);
 
 	};
 
