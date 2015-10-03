@@ -1,71 +1,35 @@
-#include <SFML/Graphics.hpp>
 
-#include <Windows.h>	//一時的
+#include "src\class_image_sequence\image_sequence.h"
 
 #include <thread>
+#include <iostream>
 
-int n[500];
+#include <SFML/Graphics.hpp>
 
-void DoThread(sf::Texture* a) {
-	OutputDebugString("スレッド開始\n");
-	for (int i = 0; i < 5; i++) {
-		a[i].loadFromFile("media\\image2.png");
+int main(void){
 
-		a[i].setSmooth(true); //こうすると拡大縮小した時にバイリニア補正がかかる
-	}
-	OutputDebugString("読み込みできた\n");
-}
-
-
-
-int main()
-{
-	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML works!");
-	sf::Texture Gr;
-	sf::Texture P[500];
-
-
-
-	Gr.loadFromFile("media\\image.png");    //testというテクスチャをロード。
-	Gr.setSmooth(true); //こうすると拡大縮小した時にバイリニア補正がかかる
-
-	printf("Aaa");
-
-	int t = 0;
-
-	while (window.isOpen()) {
-		t++;
-		if (t == 500) {
-			std::thread t1(DoThread, P);
-			t1.detach();
-
-		}
-		if (t == 10000) break;
-		sf::Event event;
-		while (window.pollEvent(event)) {
-			//「クローズが要求された」イベント：ウインドウを閉じる
-			if (event.type == sf::Event::Closed)
-				window.close();
-		}
-
-		window.clear(); //画面をクリアする（初期値は黒）
-
-						//ここから画像とかを表示
-		sf::Sprite sprite(Gr);  //画面上に表示するスプライトを作り、テクスチャを登録
-								//sprite.setColor(sf::Color(255, 0, 64, 128));   //RGBA=(255,0,64,128)で表示
-								//sprite.setOrigin(sprite.getLocalBounds().width / 2.0f, sprite.getLocalBounds().height / 2.0f);   //画像真ん中を中心として
-								//sprite.setPosition(320, 240);    //画面上の(320,240)に
-								//sprite.setScale(-2.0f, 0.5f);    //X方向に2倍、Y方向に1/2倍に引き伸ばしたうえでX方向に反転させ
-								//sprite.setRotation(90);     //スプライトを90度回転させ(度数表記であることに注意)
-
-		window.draw(sprite, sf::RenderStates(sf::BlendAdd)); //加算合成で表示
-
-															 //ここまで表示部分
-		window.display();   //画面上に転送
-	}
+	std::cout << "jubeat ONLINE version 0.1\n";
 	
-	OutputDebugString("別スレッドで読み込んだ画像\n");
+	sf::Vector2i win_pos(1920, -840);
+	sf::RenderWindow window(sf::VideoMode(1080 , 1920), "jubeat ONLINE ver0.1",sf::Style::None);
+	window.setPosition(win_pos);
+	window.setVerticalSyncEnabled(true);
+	sf::RenderTexture ScreenBuf;
+	ScreenBuf.create(1080,1920);  //バッファを作る
+	ScreenBuf.setSmooth(true);  //スムース設定ON
+	
+	sf::Texture Gr;
 
+
+
+	Gr.loadFromFile("media\\image.png");
+
+	jubeat_online::ImageSequence is;
+	is.LoadSequence("media\\clear.isf");
+
+	//読み込み
+
+	//ウインドウが開いている（ゲームループ）
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
@@ -74,20 +38,22 @@ int main()
 				window.close();
 		}
 
-		window.clear(); //画面をクリアする（初期値は黒）
+		ScreenBuf.clear(sf::Color(0, 0, 0, 255));  //バッファ画面を黒でクリア
+												   //なにか描画
 
-						//ここから画像とかを表示
-		sf::Sprite sprite(P[4]);  //画面上に表示するスプライトを作り、テクスチャを登録
-								   //sprite.setColor(sf::Color(255, 0, 64, 128));   //RGBA=(255,0,64,128)で表示
-								   //sprite.setOrigin(sprite.getLocalBounds().width / 2.0f, sprite.getLocalBounds().height / 2.0f);   //画像真ん中を中心として
-								   //sprite.setPosition(320, 240);    //画面上の(320,240)に
-								   //sprite.setScale(-2.0f, 0.5f);    //X方向に2倍、Y方向に1/2倍に引き伸ばしたうえでX方向に反転させ
-								   //sprite.setRotation(90);     //スプライトを90度回転させ(度数表記であることに注意)
+		sf::Sprite graph(Gr);
+		graph.setOrigin(graph.getLocalBounds().width / 2.0f, graph.getLocalBounds().height / 2.0f);
+		graph.setPosition(540, 960);
+		ScreenBuf.draw(graph);
 
-		window.draw(sprite, sf::RenderStates(sf::BlendAdd)); //加算合成で表示
+												   //描画終わり
 
-															 //ここまで表示部分
-		window.display();   //画面上に転送
+		ScreenBuf.display();    //バッファ画面をアップデート
+		sf::Sprite sprite(ScreenBuf.getTexture());  //バッファ画面用のスプライトを作る
+		window.clear();     //画面をクリア
+		window.draw(sprite);    //バッファ画面テクスチャの入ったスプライトを画面に描画
+								//ちなみにsf::SpriteのPositionの初期値は(0,0)です。
+		window.display();   //描画アップデート
 	}
 
 	return 0;

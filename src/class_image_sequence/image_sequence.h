@@ -6,6 +6,7 @@
 
 #include <mutex>
 
+#include <SFML/Graphics.hpp>
 
 #pragma once
 #ifndef JUBEAT_ONLINE_IMAGESEQUENCE_H_
@@ -43,7 +44,7 @@ namespace jubeat_online {
 
 		unsigned char** files_;	//マジ！？
 
-		int* images_;					//シーケンス画像を保持
+		sf::Texture* images_;			//シーケンス画像を保持
 		unsigned int all_image_frame_;	//全部のシーケンス画像枚数
 		unsigned int now_frame_;		//再生中、もしくは一時停止中の現在のフレーム番号
 		unsigned int fps_;				//動画fps
@@ -61,7 +62,12 @@ namespace jubeat_online {
 		
 		bool is_loaded_;				//読み込み完了したか
 		bool is_allocated_;				//メモリの確保など
+		ImageSequenceResult load_result_;
 		int failed_num_;
+
+		std::mutex mtx;
+
+		void LoadThread();
 
 	public:
 		ImageSequence();

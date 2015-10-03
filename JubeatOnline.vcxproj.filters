@@ -21,5 +21,13 @@
     <ClCompile Include="Main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="src\class_image_sequence\class_image_sequence.cpp">
+      <Filter>クラス\ImageSequence</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\class_image_sequence\image_sequence.h">
+      <Filter>クラス\ImageSequence</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
