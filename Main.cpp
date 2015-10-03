@@ -29,7 +29,7 @@ int main()
 	Gr.loadFromFile("media\\image.png");    //testというテクスチャをロード。
 	Gr.setSmooth(true); //こうすると拡大縮小した時にバイリニア補正がかかる
 
-
+	printf("Aaa");
 
 	int t = 0;
 
