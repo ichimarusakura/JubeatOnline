@@ -219,6 +219,14 @@ jubeat_online::ImageSequenceResult jubeat_online::ImageSequence::LoadSequence(co
 }
 
 jubeat_online::ImageSequenceResult jubeat_online::ImageSequence::SetSequenceFilename(const char * filename){
+
+	//***********************************************************************
+	//関数名:SetSequenceFilename
+	//説　明:読み込むファイル名を設定します。
+	//		 この関数でロードは発生しません。
+	//戻り値:ImageSequenceResult型
+	//***********************************************************************
+
 	if (filename_ == NULL) {
 		//初回の登録
 		size_t fsize = strlen(filename) + 1;
@@ -236,6 +244,17 @@ jubeat_online::ImageSequenceResult jubeat_online::ImageSequence::SetSequenceFile
 }
 
 int jubeat_online::ImageSequence::WaitLoadComplete(void) {
+
+	//***********************************************************************
+	//関数名:WaitLoadComplete
+	//説　明:ロードが終わり次第、一回は呼ばなくてはなりません。
+	//		 LoadSequenceによる画像ロードのキューを消費しきったかどうか、
+	//		 ループで継続的に問い合わせてください。また、これと同時に
+	//		 ProcessMessage()もループで問い合わせてください。
+	//戻り値:int型で、0なら成功、正の値なら、そのフレーム分がまだ読み込めて
+	//		 いないということ、負の値なら読み込みに失敗した枚数分をマイナスで
+	//		 表示しています。
+	//***********************************************************************
 
 	//LoadSequence実行したか
 	if (!is_allocated_) return -1;
@@ -274,7 +293,11 @@ int jubeat_online::ImageSequence::WaitLoadComplete(void) {
 	return failed_num_;
 }
 
-jubeat_online::ImageSequenceResult jubeat_online::ImageSequence::DeleteSequence(void){
+void jubeat_online::ImageSequence::DeleteSequence(void){
+
+	//シーケンスの初期化を行います。
+
+	if (is_allocated_ == false) return;
 	
 	if (images_ != NULL) {
 		for (unsigned int i = 0; i < all_image_frame_; i++) {
@@ -291,11 +314,31 @@ jubeat_online::ImageSequenceResult jubeat_online::ImageSequence::DeleteSequence(
 		free(files_);
 	}
 
+	if (filename_ != NULL) {
+		free(filename_);
+		filename_ = NULL;
+	}
+
+	all_image_frame_ = 0;
+	now_frame_ = 0;
+	fps_ = 0;
+
+	is_repeat_ = 0;
+	in_frame_ = 0;
+	out_frame_ = 0;
+
+	x_ = 0;
+	y_ = 0;
+	started_time_ = 0;
+	is_expand = 0;
+	exrate = 1.0f;
+
+	is_allocated_ = false;
+	failed_num_ = 0;
+
 	is_allocated_ = false;
 	is_loaded_ = false;
-
-
-	return ImageSequenceResult::OK;
+	
 }
 
 /*

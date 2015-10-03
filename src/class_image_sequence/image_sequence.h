@@ -108,6 +108,9 @@ namespace jubeat_online {
 		/// <param name='frame'>再生を開始するフレーム番号です。デフォルトは0フレームからです</param>
 		/// <returns>int型。成功した場合は0、再生に失敗した場合は-1を返します</returns>
 		int PlaySequence(const unsigned int frame = 0);
+
+		/// <summary>シーケンスの削除を行います。</summary>
+		void DeleteSequence(void);
 		
 
 		// *** メンバ変数操作関数 ***
@@ -165,9 +168,7 @@ namespace jubeat_online {
 		bool is_repeat(void) const;
 
 
-		/// <summary>シーケンスの削除</summary>
-		/// <returns>結果を返します</returns>
-		ImageSequenceResult DeleteSequence(void);
+		
 
 	};
 
