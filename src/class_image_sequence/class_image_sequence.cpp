@@ -46,7 +46,7 @@ jubeat_online::ImageSequence::~ImageSequence() {
 
 
 
-jubeat_online::ImageSequenceResult jubeat_online::ImageSequence::LoadSequence(const char * filename){
+jubeat_online::ImageSequenceResult	jubeat_online::ImageSequence::LoadSequence(const char * filename){
 
 	//***********************************************************************
 	//関数名:LoadSeqeunce
@@ -218,7 +218,7 @@ jubeat_online::ImageSequenceResult jubeat_online::ImageSequence::LoadSequence(co
 	return ret;
 }
 
-jubeat_online::ImageSequenceResult jubeat_online::ImageSequence::SetSequenceFilename(const char * filename){
+jubeat_online::ImageSequenceResult	jubeat_online::ImageSequence::SetSequenceFilename(const char * filename){
 
 	//***********************************************************************
 	//関数名:SetSequenceFilename
@@ -243,7 +243,7 @@ jubeat_online::ImageSequenceResult jubeat_online::ImageSequence::SetSequenceFile
 	return ImageSequenceResult::OK;
 }
 
-int jubeat_online::ImageSequence::WaitLoadComplete(void) {
+int									jubeat_online::ImageSequence::WaitLoadComplete(void) {
 
 	//***********************************************************************
 	//関数名:WaitLoadComplete
@@ -293,7 +293,12 @@ int jubeat_online::ImageSequence::WaitLoadComplete(void) {
 	return failed_num_;
 }
 
-void jubeat_online::ImageSequence::DeleteSequence(void){
+void								jubeat_online::ImageSequence::DeleteSequence(void){
+
+	//***********************************************************************
+	//関数名:DeleteSequence
+	//説　明:シーケンスの削除をします。初期化と同様です。
+	//***********************************************************************
 
 	//シーケンスの初期化を行います。
 
@@ -340,6 +345,37 @@ void jubeat_online::ImageSequence::DeleteSequence(void){
 	is_loaded_ = false;
 	
 }
+
+jubeat_online::ImageSequenceResult	jubeat_online::ImageSequence::PlaySequence(const int x, const int y, const unsigned int frame){
+
+	//***********************************************************************
+	//関数名:PlaySequence
+	//説　明:シーケンス画像を再生します。
+	//		 LoadSequence、WaitLoadCompleteを呼び出し、ロードが完成し
+	//		 ている必要があります。もしも失敗している画像があれば
+	//		 同等のサイズでIMAGE_SEQUENCE_DEFAULT_IMAGE_COLORに指定された
+	//		 色番号の四角で埋められます。
+	//引　数:[x]描写する中心のx座標
+	//		 [y]描写する中心のy座標
+	//		 [frame]描画を開始するフレーム
+	//戻り値:int型で、0なら成功、正の値なら、そのフレーム分がまだ読み込めて
+	//		 いないということ、負の値なら読み込みに失敗した枚数分をマイナスで
+	//		 表示しています。
+	//***********************************************************************
+
+	if (is_loaded_ == false) return ImageSequenceResult::LOAD_ERROR;
+
+	x_ = x;
+	y_ = y;
+
+	now_frame_ = frame;
+
+	started_time_ = GetNowCount();
+
+	return ImageSequenceResult::OK;
+}
+
+
 
 /*
 void jubeatOnline::c_ImageSequence::RepeatFlag(const bool flag)

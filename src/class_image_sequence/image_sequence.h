@@ -102,12 +102,16 @@ namespace jubeat_online {
 		/// <param name='y'>描写するy座標をここで指定します</param>
 		/// <param name='frame'>再生を開始するフレーム番号です。デフォルトは0フレームからです</param>
 		/// <returns>int型。成功した場合は0、再生に失敗した場合は-1を返します</returns>
-		int PlaySequence(const int x, const int y, const unsigned int frame = 0);
+		ImageSequenceResult PlaySequence(const int x, const int y, const unsigned int frame = 0);
 
 		/// <summary>シーケンス画像を動画として再生します。この関数を呼ぶ前にx,y座標を指定しておく必要があります</summary>
 		/// <param name='frame'>再生を開始するフレーム番号です。デフォルトは0フレームからです</param>
 		/// <returns>int型。成功した場合は0、再生に失敗した場合は-1を返します</returns>
 		int PlaySequence(const unsigned int frame = 0);
+
+		/// <summary>シーケンス画像を描写します。再生時も停止時も描写できます。</summary>
+		/// <returns>int型。成功した場合はフレーム番号、再生に失敗した場合は-1を返します</returns>
+		int DrawSequence(const unsigned int frame = 0);
 
 		/// <summary>シーケンスの削除を行います。</summary>
 		void DeleteSequence(void);

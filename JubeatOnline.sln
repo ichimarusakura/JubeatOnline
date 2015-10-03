@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JubeatOnline", "JubeatOnline.vcxproj", "{EF2EBD85-DD00-4E13-A18A-D1D286CC73FF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jubeatOnline", "jubeatOnline.vcxproj", "{AE37E603-6990-42EF-B720-6EB550ECE7F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EF2EBD85-DD00-4E13-A18A-D1D286CC73FF}.Debug|x64.ActiveCfg = Debug|x64
-		{EF2EBD85-DD00-4E13-A18A-D1D286CC73FF}.Debug|x64.Build.0 = Debug|x64
-		{EF2EBD85-DD00-4E13-A18A-D1D286CC73FF}.Debug|x86.ActiveCfg = Debug|Win32
-		{EF2EBD85-DD00-4E13-A18A-D1D286CC73FF}.Debug|x86.Build.0 = Debug|Win32
-		{EF2EBD85-DD00-4E13-A18A-D1D286CC73FF}.Release|x64.ActiveCfg = Release|x64
-		{EF2EBD85-DD00-4E13-A18A-D1D286CC73FF}.Release|x64.Build.0 = Release|x64
-		{EF2EBD85-DD00-4E13-A18A-D1D286CC73FF}.Release|x86.ActiveCfg = Release|Win32
-		{EF2EBD85-DD00-4E13-A18A-D1D286CC73FF}.Release|x86.Build.0 = Release|Win32
+		{AE37E603-6990-42EF-B720-6EB550ECE7F4}.Debug|x64.ActiveCfg = Debug|x64
+		{AE37E603-6990-42EF-B720-6EB550ECE7F4}.Debug|x64.Build.0 = Debug|x64
+		{AE37E603-6990-42EF-B720-6EB550ECE7F4}.Debug|x86.ActiveCfg = Debug|Win32
+		{AE37E603-6990-42EF-B720-6EB550ECE7F4}.Debug|x86.Build.0 = Debug|Win32
+		{AE37E603-6990-42EF-B720-6EB550ECE7F4}.Release|x64.ActiveCfg = Release|x64
+		{AE37E603-6990-42EF-B720-6EB550ECE7F4}.Release|x64.Build.0 = Release|x64
+		{AE37E603-6990-42EF-B720-6EB550ECE7F4}.Release|x86.ActiveCfg = Release|Win32
+		{AE37E603-6990-42EF-B720-6EB550ECE7F4}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

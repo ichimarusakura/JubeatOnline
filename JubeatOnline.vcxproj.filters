@@ -9,36 +9,17 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="クラスライブラリ">
+    <Filter Include="クラス">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="クラスライブラリ\Marker">
-      <UniqueIdentifier>{20e7687c-6459-40c4-927c-3908ab0f3e2d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="クラスライブラリ\ImageSequence">
-      <UniqueIdentifier>{5cbb5c5d-d111-4150-8aa0-06130c78175e}</UniqueIdentifier>
+    <Filter Include="クラス\ImageSequence">
+      <UniqueIdentifier>{c673fc4b-7d11-4381-8815-1ec2d8848c10}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\class_image_sequence\class_image_sequence.cpp">
-      <Filter>クラスライブラリ\ImageSequence</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\class_image_sequence\image_sequence.h">
-      <Filter>クラスライブラリ\ImageSequence</Filter>
-    </ClInclude>
-    <ClInclude Include="src\class_marker\marker.h">
-      <Filter>クラスライブラリ\Marker</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="isfファイルについて_ImageSequence.txt">
-      <Filter>クラスライブラリ\ImageSequence</Filter>
-    </Text>
   </ItemGroup>
 </Project>
