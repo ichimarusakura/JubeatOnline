@@ -112,21 +112,18 @@ namespace jubeat_online {
 		/// <param name='y'>表示するy座標</param>
 		/// <param name='ex'>拡大率</param>
 		/// <param name='screen_buffer'>スクリーン描写用バッファ</param>
-		/// <param name='frame'>停止時に描写するフレーム番号です。再生時には無視されます</param>
 		/// <returns>int型。成功した場合はフレーム番号、再生に失敗した場合は-1を返します</returns>
-		int DrawSequence(const float x, const float y, const float ex, sf::RenderTexture* screen_buffer, const unsigned int frame = 0);
+		int DrawSequence(const float x, const float y, const float ex, sf::RenderTexture* screen_buffer);
 
 		/// <summary>シーケンス画像を描写します。再生時に描写できます。</summary>
 		/// <param name='ex'>拡大率</param>
 		/// <param name='screen_buffer'>スクリーン描写用バッファ</param>
-		/// <param name='frame'>停止時に描写するフレーム番号です。再生時には無視されます</param>
 		/// <returns>int型。成功した場合はフレーム番号、再生に失敗した場合は-1を返します</returns>
-		int DrawSequence(const float x, const float y, sf::RenderTexture* screen_buffer, const unsigned int frame = 0);
+		int DrawSequence(const float x, const float y, sf::RenderTexture* screen_buffer);
 
 		/// <summary>シーケンス画像を描写します。再生時に描写できます。</summary>
-		/// <param name='frame'>停止時に描写するフレーム番号です。再生時には無視されます</param>
 		/// <returns>int型。成功した場合はフレーム番号、再生に失敗した場合は-1を返します</returns>
-		int DrawSequence(sf::RenderTexture* screen_buffer, const unsigned int frame = 0);
+		int DrawSequence(sf::RenderTexture* screen_buffer);
 
 
 		/// <summary>シーケンスの削除を行います。</summary>

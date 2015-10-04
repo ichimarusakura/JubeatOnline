@@ -278,22 +278,26 @@ int									jubeat_online::ImageSequence::WaitLoadComplete(void) {
 }
 
 
-int jubeat_online::ImageSequence::DrawSequence(const float x, const float y, const float ex, sf::RenderTexture * screen_buffer, const unsigned int frame)
+int jubeat_online::ImageSequence::DrawSequence(const float x, const float y, const float ex, sf::RenderTexture * screen_buffer)
 {
 	exrate_ = ex;
-	return DrawSequence(x,y,screen_buffer,frame);
+	return DrawSequence(x,y,screen_buffer);
 }
 
-int jubeat_online::ImageSequence::DrawSequence(const float x, const float y, sf::RenderTexture * screen_buffer, const unsigned int frame)
+int jubeat_online::ImageSequence::DrawSequence(const float x, const float y, sf::RenderTexture * screen_buffer)
 {
 	x_ = x;
 	y_ = y;
-	return DrawSequence(screen_buffer,frame);
+	return DrawSequence(screen_buffer);
 }
 
-int jubeat_online::ImageSequence::DrawSequence(sf::RenderTexture* screen_buffer, const unsigned int frame)
+int jubeat_online::ImageSequence::DrawSequence(sf::RenderTexture* screen_buffer)
 {
-	
+	//***********************************************************************
+	//関数名:DrawSequence
+	//説　明:画面に実際に描写します
+	//戻り値:int型。-1は描写せず、それ以外は描写したフレーム番号
+	//***********************************************************************
 	//ロードは完了しているか
 	if (is_loaded_ == false) return -1;
 
@@ -318,11 +322,11 @@ int jubeat_online::ImageSequence::DrawSequence(sf::RenderTexture* screen_buffer,
 		graph.setScale(exrate_, exrate_);
 		screen_buffer->draw(graph);
 
-
+		return now_frame_;
 	}
 	
 
-	return 0;
+	return -1;
 }
 
 void								jubeat_online::ImageSequence::DeleteSequence(void){
@@ -430,9 +434,7 @@ jubeat_online::ImageSequenceResult	jubeat_online::ImageSequence::PlaySequence(co
 	//		 ている必要があります。もしも失敗している画像があれば
 	//		 同等のサイズでIMAGE_SEQUENCE_DEFAULT_IMAGE_COLORに指定された
 	//		 色番号の四角で埋められます。
-	//引　数:[x]描写する中心のx座標
-	//		 [y]描写する中心のy座標
-	//		 [frame]描画を開始するフレーム
+	//引　数:[frame]描画を開始するフレーム
 	//戻り値:int型で、0なら成功、正の値なら、そのフレーム分がまだ読み込めて
 	//		 いないということ、負の値なら読み込みに失敗した枚数分をマイナスで
 	//		 表示しています。
