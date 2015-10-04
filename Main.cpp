@@ -28,13 +28,11 @@ int main(void){
 	ScreenBuf.setSmooth(true);  //スムース設定ON
 	
 	sf::Texture Gr;
+	Gr.loadFromFile("media/media.png");
 
-	jubeat_online::DividedImage di;
-	sf::Vector2u ti(230,230);
-	di.load("media\\shutter.png",ti,5,5,25);
+	jubeat_online::ImageSequence marker;
+	marker.LoadDivGraph(25, 5, 5, 230, 230, "media\\shutter.png");
 
-	Gr.loadFromFile("media\\media.png");
-	Gr.setSmooth(true);
 
 	//jubeat_online::ImageSequence is;
 	//is.LoadSequence("media\\wtjp.isf");
@@ -44,7 +42,6 @@ int main(void){
 
 	//ウインドウが開いている（ゲームループ）
 	while (window.isOpen()) {
-		t++;
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			//「クローズが要求された」イベント：ウインドウを閉じる
@@ -60,20 +57,17 @@ int main(void){
 		graph.setRotation(-90);
 		ScreenBuf.draw(graph);
 		//なにか描画
-		/*
-		if (is.WaitLoadComplete() == 0 && t == 0) {
+		
+		if (marker.WaitLoadComplete() == 0 && t == 0) {
 			t = 1;
-			is.PlaySequence();
+			marker.PlaySequence();
 		}
 		
 		if (t == 1) {
-			is.DrawSequence(384, 200,0.7f, &ScreenBuf);
+			marker.DrawSequence(500, 500, &ScreenBuf);
 		}
-		*/
-		di.setPosition(500.0f, 500.0f);
-		if (t >= 250) t = 0;
-		di.setFrame(t % 25);
-		ScreenBuf.draw(di);
+		
+
 
 
 		ScreenBuf.display();    //バッファ画面をアップデート

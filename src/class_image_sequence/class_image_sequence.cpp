@@ -420,9 +420,55 @@ void jubeat_online::ImageSequence::InitOutPoint(void)
 	set_out_frame(all_image_frame_);
 }
 
-int jubeat_online::ImageSequence::LoadDivGraph(const int all_framecount, const int x_div, const int y_div, const int width, const int height, const char * filename)
+void jubeat_online::ImageSequence::LoadDivThread(const int x_div, const int y_div, const int width, const int height)
 {
-	return 0;
+	std::lock_guard<std::mutex> lock(mtx_);
+
+	load_result_ = ImageSequenceResult::OK;
+
+	sf::Image gr;
+	if (gr.loadFromFile(filename_) == false) {
+		std::cout << "[失敗]" << filename_ << "が見つかりませんでした\n";
+		load_result_ = ImageSequenceResult::LOAD_ERROR;
+		return;
+	}
+
+	images_ = new sf::Texture[all_image_frame_];
+	if (images_ == NULL) {
+		load_result_ = ImageSequenceResult::OUT_OF_MEMORY;
+		return;
+	}
+
+	for (int x = 0; x < x_div; x++) {
+		for (int y = 0; y < y_div; y++) {
+			images_[x + y * x_div].loadFromImage(gr, sf::IntRect(x * width, y * height, width, height));
+		}
+	}
+
+	is_loaded_ = true;
+	std::cout << "ImageSequence DividedImageのスレッドを終了しました\n";
+}
+
+jubeat_online::ImageSequenceResult jubeat_online::ImageSequence::LoadDivGraph(const int all_framecount, const int x_div, const int y_div, const int width, const int height, const char * filename)
+{
+
+	ImageSequenceResult ret = ImageSequenceResult::OK;
+
+	//シーケンス画像ファイルのファイル名の処理
+	if (filename != NULL) {
+		ImageSequenceResult fret = SetSequenceFilename(filename);
+		if (fret != ImageSequenceResult::OK) return fret;
+	}
+
+	all_image_frame_ = all_framecount;
+	
+
+	std::cout << "ImageSequence DividedImageのスレッドを開始しました\n";
+	std::thread th(&jubeat_online::ImageSequence::LoadDivThread, this,x_div,y_div,width,height);
+	th.detach();
+
+
+	return ret;
 }
 
 jubeat_online::ImageSequenceResult	jubeat_online::ImageSequence::PlaySequence(const unsigned int frame){

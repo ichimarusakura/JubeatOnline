@@ -67,6 +67,7 @@ namespace jubeat_online {
 		std::mutex mtx_;
 
 		void LoadThread();
+		void LoadDivThread(const int x_div, const int y_div, const int width, const int height);
 
 	public:
 		ImageSequence();
@@ -98,9 +99,9 @@ namespace jubeat_online {
 		/// <param name='height'>1コマの高さ</param>
 		/// <param name='filename'>シーケンス画像を独自の形式でまとめたファイルのパス付き名前。SetSequenceFilenameを呼び出している場合はNULL指定します。
 		/// ここでもファイル名を与えた場合は、こちらの情報を優先します</param>
-		/// <returns>成功:0 ロードに失敗:-1 ファイル形式不正:-2 ファイル名指定なし:-3</returns>
+		/// <returns>ImageSequenceResult型</returns>
 		/// <remarks>指定された形式の詳細はImageSequence.txtを参照ください</remarks>
-		int LoadDivGraph(const int all_framecount, const int x_div, const int y_div, const int width, const int height, const char *filename = NULL);
+		ImageSequenceResult LoadDivGraph(const int all_framecount, const int x_div, const int y_div, const int width, const int height, const char *filename = NULL);
 
 
 		/// <summary>シーケンス画像を動画として再生します。この関数を呼ぶ前にx,y座標を指定しておく必要があります</summary>
