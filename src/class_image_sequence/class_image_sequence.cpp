@@ -49,7 +49,7 @@ void								jubeat_online::ImageSequence::LoadThread(void) {
 	//ñﬂÇËíl:voidå^ÅBåãâ ÇÕload_result_Ç…äiî[Ç≥ÇÍÇ‹Ç∑ÅB
 	//***********************************************************************
 	
-	std::lock_guard<std::mutex> lock(mtx);
+	std::lock_guard<std::mutex> lock(mtx_);
 
 	//ñﬂÇËíläiî[óp
 	ImageSequenceResult ret = ImageSequenceResult::OK;

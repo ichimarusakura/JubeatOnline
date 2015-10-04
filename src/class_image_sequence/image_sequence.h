@@ -4,13 +4,14 @@
 //*		Programmed by ÇŸÇÌÇ¢Ç∆						*
 //***************************************************
 
-#include <mutex>
-
-#include <SFML/Graphics.hpp>
 
 #pragma once
 #ifndef JUBEAT_ONLINE_IMAGESEQUENCE_H_
 #define JUBEAT_ONLINE_IMAGESEQUENCE_H_
+
+#include <mutex>
+
+#include <SFML/Graphics.hpp>
 
 #ifndef NULL
 #define NULL 0
@@ -63,7 +64,7 @@ namespace jubeat_online {
 		bool is_allocated_;				//ÉÅÉÇÉäÇÃämï€Ç»Ç«
 		ImageSequenceResult load_result_;
 
-		std::mutex mtx;
+		std::mutex mtx_;
 
 		void LoadThread();
 
