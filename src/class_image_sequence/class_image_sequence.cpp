@@ -18,7 +18,7 @@ jubeat_online::ImageSequence::ImageSequence() {
 
 	all_image_frame_ = 0;
 	now_frame_ = 0;
-	fps_ = 0;
+	fps_ = 30;
 
 	is_repeat_ = 0;
 	in_frame_ = 0;
@@ -353,7 +353,7 @@ void								jubeat_online::ImageSequence::DeleteSequence(void){
 
 	all_image_frame_ = 0;
 	now_frame_ = 0;
-	fps_ = 0;
+	fps_ = 30;
 
 	is_repeat_ = 0;
 	in_frame_ = 0;
@@ -441,11 +441,14 @@ void jubeat_online::ImageSequence::LoadDivThread(const int x_div, const int y_di
 
 	for (int x = 0; x < x_div; x++) {
 		for (int y = 0; y < y_div; y++) {
-			images_[x + y * x_div].loadFromImage(gr, sf::IntRect(x * width, y * height, width, height));
+			if (images_[x + y * x_div].loadFromImage(gr, sf::IntRect(x * width, y * height, width, height)) == false) {
+				std::cout << "画像の読み込みに失敗しました\n";
+			}
 		}
 	}
 
 	is_loaded_ = true;
+	out_frame_ = all_image_frame_;
 	std::cout << "ImageSequence DividedImageのスレッドを終了しました\n";
 }
 
@@ -467,6 +470,7 @@ jubeat_online::ImageSequenceResult jubeat_online::ImageSequence::LoadDivGraph(co
 	std::thread th(&jubeat_online::ImageSequence::LoadDivThread, this,x_div,y_div,width,height);
 	th.detach();
 
+	is_allocated_ = true;
 
 	return ret;
 }
@@ -507,4 +511,9 @@ void jubeat_online::ImageSequence::set_is_repeat(const bool flag)
 bool jubeat_online::ImageSequence::is_repeat(void) const
 {
 	return is_repeat_;
+}
+
+void jubeat_online::ImageSequence::set_fps(const unsigned int fps)
+{
+	fps_ = fps;
 }

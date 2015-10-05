@@ -186,6 +186,10 @@ namespace jubeat_online {
 		/// <returns>リピート設定の場合true、リピートしない場合falseが返されます</returns>
 		bool is_repeat(void) const;
 
+		/// <summary>fpsをセットします</summary>
+		/// <param name=""></param>
+		void set_fps(const unsigned int fps);
+
 
 	};
 
