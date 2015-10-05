@@ -13,9 +13,6 @@
 
 #include <SFML/Graphics.hpp>
 
-#ifndef NULL
-#define NULL 0
-#endif
 
 namespace jubeat_online {
 

@@ -3,7 +3,6 @@
 //*			Programmed by white					*
 //***********************************************
 
-#include "image_sequence.h"
 
 #include <string.h>
 
@@ -11,6 +10,7 @@
 #include <thread>
 #include <exception>
 
+#include "include/image_sequence.h"
 
 jubeat_online::ImageSequence::ImageSequence() {
 	filename_ = NULL;

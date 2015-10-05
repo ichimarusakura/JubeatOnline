@@ -16,27 +16,18 @@
     <Filter Include="クラス\ImageSequence">
       <UniqueIdentifier>{c673fc4b-7d11-4381-8815-1ec2d8848c10}</UniqueIdentifier>
     </Filter>
-    <Filter Include="クラス\DividedImage">
-      <UniqueIdentifier>{7a96a6fd-fef2-4bae-ba27-838e77426b40}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\class_image_sequence\class_image_sequence.cpp">
+    <ClCompile Include="src\class_image_sequence.cpp">
       <Filter>クラス\ImageSequence</Filter>
-    </ClCompile>
-    <ClCompile Include="src\class_divided_image\class_divided_image.cpp">
-      <Filter>クラス\DividedImage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\class_image_sequence\image_sequence.h">
+    <ClInclude Include="src\include\image_sequence.h">
       <Filter>クラス\ImageSequence</Filter>
-    </ClInclude>
-    <ClInclude Include="src\class_divided_image\divided_image.h">
-      <Filter>クラス\DividedImage</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
