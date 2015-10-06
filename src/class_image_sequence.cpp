@@ -353,6 +353,20 @@ int jubeat_online::ImageSequence::DrawSequence(sf::RenderTexture* screen_buffer)
 	return -1;
 }
 
+int jubeat_online::ImageSequence::DrawFrame(const float x, const float y, const float ex, const unsigned int frame, sf::RenderTexture* screen_buffer) {
+
+	if (frame >= 0 && frame < all_image_frame_) {
+
+		sf::Sprite graph(images_[frame]);
+		graph.setOrigin(graph.getLocalBounds().width / 2.0f, graph.getLocalBounds().height / 2.0f);
+		graph.setPosition(x, y);
+		graph.setScale(ex, ex);
+		screen_buffer->draw(graph);
+		return 0;
+	}
+	return -1;
+}
+
 void								jubeat_online::ImageSequence::DeleteSequence(void){
 
 	//***********************************************************************

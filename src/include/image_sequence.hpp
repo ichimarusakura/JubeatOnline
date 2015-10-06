@@ -120,6 +120,12 @@ namespace jubeat_online {
 		/// <summary>シーケンス画像を描写します。再生時に描写できます。</summary>
 		/// <returns>int型。成功した場合はフレーム番号、再生に失敗した場合は-1を返します</returns>
 		int DrawSequence(sf::RenderTexture* screen_buffer);
+		
+		/// <summary>シーケンス画像をフレーム静止画として描写します。</summary>
+		/// <param name='frame'>表示したいフレーム</param>
+		/// <param name='screen_buffer'>スクリーン描写バッファ</param>
+		/// <returns>int型。成功した場合は0、失敗した場合は-1を返します</returns>
+		int DrawFrame(const float x, const float y, const float ex, const unsigned int frame, sf::RenderTexture* screen_buffer);
 
 
 		/// <summary>シーケンスの削除を行います。</summary>
