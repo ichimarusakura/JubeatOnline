@@ -9,34 +9,34 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="クラスライブラリ">
+    <Filter Include="クラス">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="クラスライブラリ\Marker">
-      <UniqueIdentifier>{20e7687c-6459-40c4-927c-3908ab0f3e2d}</UniqueIdentifier>
+    <Filter Include="クラス\ImageSequence">
+      <UniqueIdentifier>{c673fc4b-7d11-4381-8815-1ec2d8848c10}</UniqueIdentifier>
     </Filter>
-    <Filter Include="クラスライブラリ\ImageSequence">
-      <UniqueIdentifier>{5cbb5c5d-d111-4150-8aa0-06130c78175e}</UniqueIdentifier>
+    <Filter Include="クラス\OutputLogtext">
+      <UniqueIdentifier>{22b5421f-6419-4b18-a81a-342d3cb936c4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\class_ImageSequence\class_ImageSequence.cpp">
-      <Filter>クラスライブラリ\ImageSequence</Filter>
+    <ClCompile Include="src\class_image_sequence.cpp">
+      <Filter>クラス\ImageSequence</Filter>
     </ClCompile>
-    <ClCompile Include="src\class_Marker\class_Marker.cpp">
-      <Filter>クラスライブラリ\Marker</Filter>
+    <ClCompile Include="src\class_output_logtext.cpp">
+      <Filter>クラス\OutputLogtext</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\class_ImageSequence\ImageSequence.h">
-      <Filter>クラスライブラリ\ImageSequence</Filter>
+    <ClInclude Include="src\include\output_logtext.hpp">
+      <Filter>クラス\OutputLogtext</Filter>
     </ClInclude>
-    <ClInclude Include="src\class_Marker\Marker.h">
-      <Filter>クラスライブラリ\Marker</Filter>
+    <ClInclude Include="src\include\image_sequence.hpp">
+      <Filter>クラス\ImageSequence</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
