@@ -89,7 +89,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>SFML-2.3.2_64bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -136,9 +136,11 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="src\class_image_sequence.cpp" />
+    <ClCompile Include="src\class_output_logtext.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\include\image_sequence.h" />
+    <ClInclude Include="src\include\image_sequence.hpp" />
+    <ClInclude Include="src\include\output_logtext.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

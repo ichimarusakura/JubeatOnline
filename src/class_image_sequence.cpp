@@ -7,10 +7,12 @@
 #include <string.h>
 
 #include <iostream>
+#include <fstream>
 #include <thread>
 #include <exception>
 
-#include "include/image_sequence.h"
+#include "include/image_sequence.hpp"
+#include "include/output_logtext.hpp"
 
 jubeat_online::ImageSequence::ImageSequence() {
 	filename_ = NULL;
@@ -53,45 +55,53 @@ void								jubeat_online::ImageSequence::LoadThread(void) {
 
 	//戻り値格納用
 	ImageSequenceResult ret = ImageSequenceResult::OK;
+	std::string a;
 
 	//シーケンス画像を読み込む
 	//ファイルを開封
-	FILE* fp;
+	std::ifstream fp(filename_, std::ios::binary);
 	//mtx.lock();
-	if (fopen_s(&fp, filename_, "rb") != 0) {
+	if (fp.fail()) {
 		//ファイルの開封に失敗
 		ret = ImageSequenceResult::LOAD_ERROR;
+		a = "ファイルの開封に失敗しました:";
+		a += filename_;
+		jubeat_online::OutputLogtext::OutputS(a,"ImageSequence");
 		return;
 	}
 
-	unsigned char type = 0x00, pass = 0x00, length = 0x00, fps = 0x00;
+	char type = 0x00, pass = 0x00, length = 0x00, fps = 0x00;
+	char tm[2];
 
 	do {
 
 		//まず識別子の取得
-		if (fread_s(&type, sizeof(char), 1, 1, fp) < 1) { ret = ImageSequenceResult::MALFORMED_FILE; break; }
+		fp.read(&type, 1);
+		fp.read(&pass, 1);
+		fp.read(&length, 1);
+		fp.read(&fps, 1);
+		fp.read(tm, 2);
 
-		//簡易パスワード
-		if (fread_s(&pass, sizeof(char), 1, 1, fp) < 1) { ret = ret = ImageSequenceResult::MALFORMED_FILE; break; }
-
-		//longバイト長さ
-		if (fread_s(&length, sizeof(char), 1, 1, fp) < 1) { ret = ret = ImageSequenceResult::MALFORMED_FILE; break; }
-
-		//フレームレート
-		if (fread_s(&fps, sizeof(char), 1, 1, fp) < 1) { ret = ret = ImageSequenceResult::MALFORMED_FILE; break; }
-		fps_ = static_cast<unsigned int>(fps);
+		if (fp.bad()) {
+			OutputLogtext::Output("ファイル形式が間違っています","ImageSequence");
+			ret = ImageSequenceResult::MALFORMED_FILE;
+		}
 
 		//総フレーム数
-		char tm[2];
 		all_image_frame_ = 0;
-		if (fread_s(tm, sizeof(char) * 2, 1, 2, fp) < 2) { ret = ret = ImageSequenceResult::MALFORMED_FILE; break; }
 		for (int i = 0; i < 2; i++) {
 			unsigned int t = static_cast<unsigned int>(0x000000ff & tm[i]);
 			t <<= 8 * i;
 			all_image_frame_ |= t;
 		}
 
-		unsigned char* size_str = new unsigned char[length];
+		a = filename_;
+		a += ":総ファイル数:";
+		a += std::to_string(all_image_frame_);
+
+		OutputLogtext::OutputS(a, "ImageSequence");
+
+		char* size_str = new char[length];
 
 		//画像フレーム格納領域
 		images_ = new sf::Texture[all_image_frame_];
@@ -118,7 +128,11 @@ void								jubeat_online::ImageSequence::LoadThread(void) {
 				else do {
 
 					//読み込み（サイズ）
-					if (fread_s(size_str, length, 1, length, fp) < length) {
+					fp.read(size_str, length);
+					if (fp.bad()) {
+						a = "ファイル形式が不正です:サイズヘッダ読み込み:";
+						a += filename_;
+						OutputLogtext::OutputS(a, "ImageSequence");
 						ret = ImageSequenceResult::MALFORMED_FILE;
 						break;
 					}
@@ -130,16 +144,23 @@ void								jubeat_online::ImageSequence::LoadThread(void) {
 					}
 
 					//データ本体を持ってくる領域確保
-					unsigned char* ndata = new unsigned char[size];
+					char* ndata = new char[size];
 
 					if (ndata == NULL) {
+						a = "メモリの確保に失敗しました:";
+						a += filename_;
+						OutputLogtext::OutputS(a, "ImageSequence");
 						ret = ImageSequenceResult::OUT_OF_MEMORY;
 						break;
 					}
 					else do {
 
 						//ファイルを読み取る
-						if (fread_s(ndata, sizeof(char) * size, 1, size, fp) < (size_t)size) {
+						fp.read(ndata, size);
+						if (fp.bad()) {
+							a = "ファイル形式が不正です:データが不足しています:";
+							a += filename_;
+							OutputLogtext::OutputS(a, "ImageSequence");
 							ret = ImageSequenceResult::MALFORMED_FILE;
 							break;
 						}
@@ -155,7 +176,11 @@ void								jubeat_online::ImageSequence::LoadThread(void) {
 							}
 						}
 						catch (std::exception &ex) {
-							std::cout << "[exception]Image cannot load:" << ex.what();
+							a = "ファイルの読み込みに失敗しました:";
+							a += filename_;
+							a += ":";
+							a += ex.what();
+							OutputLogtext::OutputS(a, "ImageSequence");
 						}
 
 					} while (0);
@@ -173,8 +198,7 @@ void								jubeat_online::ImageSequence::LoadThread(void) {
 				delete[] images_;
 			}
 
-			fclose(fp);
-			fp = NULL;
+			fp.close();
 
 		} while (0);
 
@@ -191,7 +215,9 @@ void								jubeat_online::ImageSequence::LoadThread(void) {
 	}
 
 	load_result_ = ret;
-	std::cout << "ImageSequenceスレッドを終了します" << filename_ << "\n";
+	a = "読み込み処理が完了しました。スレッドを終了します:";
+	a += filename_;
+	OutputLogtext::OutputS(a, "ImageSequence");
 
 
 	//mtx.unlock();
@@ -218,12 +244,10 @@ jubeat_online::ImageSequenceResult	jubeat_online::ImageSequence::LoadSequence(co
 
 	else if (filename_ == NULL) return ImageSequenceResult::NULL_FILEPATH;		//ファイル名を指定しろ
 	
-	//TO DOこのSetSequenceを追加すること
-	//temporary
-	
+
 	if (is_allocated_) DeleteSequence();
 	
-	std::cout << "ImageSequenceスレッドを開始します" << filename << "\n";
+	OutputLogtext::OutputS("読み込みスレッドを開始します:" + static_cast<std::string>(filename),"ImageSequence");
 
 	std::thread th(&jubeat_online::ImageSequence::LoadThread, this);
 	th.detach();
@@ -370,22 +394,22 @@ void								jubeat_online::ImageSequence::DeleteSequence(void){
 	
 }
 
-void jubeat_online::ImageSequence::set_x(const int x)
+void jubeat_online::ImageSequence::set_x(const float x)
 {
 	x_ = x;
 }
 
-int jubeat_online::ImageSequence::x(void) const
+float jubeat_online::ImageSequence::x(void) const
 {
 	return x_;
 }
 
-void jubeat_online::ImageSequence::set_y(const int y)
+void jubeat_online::ImageSequence::set_y(const float y)
 {
 	y_ = y;
 }
 
-int jubeat_online::ImageSequence::y(void) const
+float jubeat_online::ImageSequence::y(void) const
 {
 	return y_;
 }
@@ -428,7 +452,7 @@ void jubeat_online::ImageSequence::LoadDivThread(const int x_div, const int y_di
 
 	sf::Image gr;
 	if (gr.loadFromFile(filename_) == false) {
-		std::cout << "[失敗]" << filename_ << "が見つかりませんでした\n";
+		OutputLogtext::OutputS("画像ファイルを読み込めませんでした。:" + static_cast<std::string>(filename_), "ImageSequence");
 		load_result_ = ImageSequenceResult::LOAD_ERROR;
 		return;
 	}
@@ -442,14 +466,14 @@ void jubeat_online::ImageSequence::LoadDivThread(const int x_div, const int y_di
 	for (int x = 0; x < x_div; x++) {
 		for (int y = 0; y < y_div; y++) {
 			if (images_[x + y * x_div].loadFromImage(gr, sf::IntRect(x * width, y * height, width, height)) == false) {
-				std::cout << "画像の読み込みに失敗しました\n";
+				OutputLogtext::OutputS("画像ファイルを読み込めませんでした。:" + static_cast<std::string>(filename_), "ImageSequence");
 			}
 		}
 	}
 
 	is_loaded_ = true;
 	out_frame_ = all_image_frame_;
-	std::cout << "ImageSequence DividedImageのスレッドを終了しました\n";
+	OutputLogtext::OutputS("読み込みのスレッドを終了します:" + static_cast<std::string>(filename_), "ImageSequence");
 }
 
 jubeat_online::ImageSequenceResult jubeat_online::ImageSequence::LoadDivGraph(const int all_framecount, const int x_div, const int y_div, const int width, const int height, const char * filename)
@@ -466,7 +490,7 @@ jubeat_online::ImageSequenceResult jubeat_online::ImageSequence::LoadDivGraph(co
 	all_image_frame_ = all_framecount;
 	
 
-	std::cout << "ImageSequence DividedImageのスレッドを開始しました\n";
+	OutputLogtext::OutputS("読み込みのスレッドを開始します:" + static_cast<std::string>(filename_), "ImageSequence");
 	std::thread th(&jubeat_online::ImageSequence::LoadDivThread, this,x_div,y_div,width,height);
 	th.detach();
 

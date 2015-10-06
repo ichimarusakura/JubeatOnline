@@ -16,9 +16,6 @@
 
 namespace jubeat_online {
 
-	typedef void * HANDLE;
-
-
 	//c_ImageSequence関数について
 	//	シーケンス画像をもとにアニメーションを展開します。
 	//	この関数で、シーケンス画像のロードから描画まですべて行います
@@ -133,20 +130,20 @@ namespace jubeat_online {
 
 		/// <summary>X座標の設定を行います</summary>
 		/// <param name='x'>新しく設定するX座標です</param>
-		void set_x(const int x);
+		void set_x(const float x);
 
 		/// <summary>X座標の取得を行います</summary>
 		/// <returns>int型X座標を返します</returns>
-		int x(void) const;
+		float x(void) const;
 
 
 		/// <summary>Y座標の設定を行います</summary>
 		/// <param name='x'>新しく設定するY座標です</param>
-		void set_y(const int y);
+		void set_y(const float y);
 
 		/// <summary>Y座標の取得を行います</summary>
 		/// <returns>int型Y座標を返します</returns>
-		int y(void) const;
+		float y(void) const;
 
 
 		/// <summary>ループ時のインポイントの設定を行います
