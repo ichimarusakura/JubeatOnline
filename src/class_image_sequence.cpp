@@ -11,8 +11,8 @@
 #include <thread>
 #include <exception>
 
-#include "include/image_sequence.hpp"
-#include "include/output_logtext.hpp"
+#include "image_sequence.hpp"
+#include "output_logtext.hpp"
 
 jubeat_online::ImageSequence::ImageSequence() {
 	filename_ = NULL;
@@ -43,7 +43,7 @@ jubeat_online::ImageSequence::~ImageSequence() {
 }
 
 
-void								jubeat_online::ImageSequence::LoadThread(void) {
+void jubeat_online::ImageSequence::LoadThread(void) {
 
 	//***********************************************************************
 	//ä÷êîñº:(private)LoadThread
@@ -223,7 +223,7 @@ void								jubeat_online::ImageSequence::LoadThread(void) {
 	//mtx.unlock();
 }
 
-jubeat_online::ImageSequenceResult	jubeat_online::ImageSequence::LoadSequence(const char * filename){
+jubeat_online::ImageSequenceResult jubeat_online::ImageSequence::LoadSequence(const char * filename){
 
 	//***********************************************************************
 	//ä÷êîñº:LoadSeqeunce
@@ -257,7 +257,7 @@ jubeat_online::ImageSequenceResult	jubeat_online::ImageSequence::LoadSequence(co
 	return ret;
 }
 
-jubeat_online::ImageSequenceResult	jubeat_online::ImageSequence::SetSequenceFilename(const char * filename){
+jubeat_online::ImageSequenceResult jubeat_online::ImageSequence::SetSequenceFilename(const char * filename){
 
 	//***********************************************************************
 	//ä÷êîñº:SetSequenceFilename
@@ -282,7 +282,7 @@ jubeat_online::ImageSequenceResult	jubeat_online::ImageSequence::SetSequenceFile
 	return ImageSequenceResult::OK;
 }
 
-int									jubeat_online::ImageSequence::WaitLoadComplete(void) {
+int jubeat_online::ImageSequence::WaitLoadComplete(void) {
 
 	//***********************************************************************
 	//ä÷êîñº:WaitLoadComplete
@@ -367,7 +367,7 @@ int jubeat_online::ImageSequence::DrawFrame(const float x, const float y, const 
 	return -1;
 }
 
-void								jubeat_online::ImageSequence::DeleteSequence(void){
+void jubeat_online::ImageSequence::DeleteSequence(void){
 
 	//***********************************************************************
 	//ä÷êîñº:DeleteSequence
