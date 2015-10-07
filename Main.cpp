@@ -1,3 +1,7 @@
+
+#include "src/class_image_sequence/image_sequence.h"
+#include "src/class_divided_image/divided_image.h"
+
 #include <thread>
 #include <iostream>
 
@@ -5,19 +9,17 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "src/include/image_sequence.hpp"
-#include "src/include/output_logtext.hpp"
-
 int main(void){
 
 	std::cout << "jubeat ONLINE version 0.1\n";
 	
-	sf::Vector2i win_pos(1920, -840);
+	sf::Vector2i win_pos(1920, -604);
 	sf::RenderWindow window(sf::VideoMode(1080,1920), "jubeat ONLINE ver0.1",sf::Style::None);
 	window.setPosition(win_pos);
 	window.setVerticalSyncEnabled(true);
 	window.setFramerateLimit(30);
 	
+
 
 
 	sf::RenderTexture ScreenBuf;
@@ -29,18 +31,12 @@ int main(void){
 	Gr.loadFromFile("media/media.png");
 
 	jubeat_online::ImageSequence marker;
-	marker.set_is_repeat(true);
-	marker.set_fps(24);
 	marker.LoadDivGraph(25, 5, 5, 230, 230, "media\\shutter.png");
 
 
-	jubeat_online::ImageSequence is;
-	is.LoadSequence("media\\wtjp.isf");
-	is.set_is_repeat(true);
-
-	jubeat_online::ImageSequence is2;
-	is2.LoadSequence("media\\wtjp.isf");
-	is2.set_is_repeat(true);
+	//jubeat_online::ImageSequence is;
+	//is.LoadSequence("media\\wtjp.isf");
+	//is.set_is_repeat(true);
 	
 	int t = 0;
 
@@ -69,7 +65,6 @@ int main(void){
 		
 		if (t == 1) {
 			marker.DrawSequence(500, 500, &ScreenBuf);
-			marker.DrawFrame(100, 100, 1.0, 15, &ScreenBuf);
 		}
 		
 
@@ -87,8 +82,6 @@ int main(void){
 
 		//if (is.WaitLoadComplete() == 0) //std::cout << "end\n";
 	}
-
-	jubeat_online::OutputLogtext::Output("ƒvƒƒOƒ‰ƒ€I—¹-----------------------\n");
 
 	return 0;
 }
