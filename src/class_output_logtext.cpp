@@ -1,4 +1,4 @@
-#include "output_logtext.hpp"
+#include "include/output_logtext.hpp"
 
 std::ofstream jubeat_online::OutputLogtext::file;
 std::mutex jubeat_online::OutputLogtext::mtx_;

@@ -1,5 +1,5 @@
 
-#include "image_sequence.hpp"
+#include "include/image_sequence.hpp"
 
 #include <thread>
 #include <iostream>

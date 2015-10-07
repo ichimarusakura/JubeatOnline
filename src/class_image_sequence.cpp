@@ -11,8 +11,8 @@
 #include <thread>
 #include <exception>
 
-#include "image_sequence.hpp"
-#include "output_logtext.hpp"
+#include "include/image_sequence.hpp"
+#include "include/output_logtext.hpp"
 
 jubeat_online::ImageSequence::ImageSequence() {
 	filename_ = NULL;
