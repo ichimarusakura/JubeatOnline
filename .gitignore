@@ -211,8 +211,16 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 
+
+#UsersIgnore
 DebugLog.txt
-Log.txt
+Debug/
+x64/
+jubeat_online.sdf
+jubeat_online.sln
+jubeat_online.vcxproj
+jubeat_online.vcxproj.filters
+
 
 
 lib/*

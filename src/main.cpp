@@ -8,6 +8,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "audioLogic.h"
+
 int main(void){
 
 	std::cout << "jubeat ONLINE version 0.1\n";
