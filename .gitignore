@@ -212,14 +212,6 @@ _Pvt_Extensions/
 ModelManifest.xml
 
 
-#UsersIgnore
-DebugLog.txt
-Debug/
-x64/
-jubeat_online.sdf
-jubeat_online.sln
-jubeat_online.vcxproj
-jubeat_online.vcxproj.filters
 
 #UsersIdentity
 *.sln
@@ -227,5 +219,10 @@ jubeat_online.vcxproj.filters
 *.vcxproj
 *.vcxproj.filters
 *.vcproj.user
+
+DebugLog.txt
+Debug/
+x64/
+
 
 lib/*
