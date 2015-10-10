@@ -221,9 +221,11 @@ jubeat_online.sln
 jubeat_online.vcxproj
 jubeat_online.vcxproj.filters
 
-
+#UsersIdentity
+*.sln
+*.sdf
+*.vcxproj
+*.vcxproj.filters
+*.vcproj.user
 
 lib/*
-JubeatOnline.sln
-JubeatOnline.vcxproj
-JubeatOnline.vcxproj.filters
