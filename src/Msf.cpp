@@ -1,10 +1,10 @@
-#include<iostream>
+#include <iostream>
 #include <fstream>
 #include "Msf.h"
 
 using namespace std;
 
-// C++11からtyped enumが使えるよ！！やったね！！
+// Since C++11, we can use "typed enum" !
 enum SequenceType : char {
 	Offset = 0x0000,
 	Bpm = 0x0001,
@@ -39,7 +39,7 @@ void Msf::Save(string filename) {
 
 	for (Sequence seq: (*this->sequences_))
 	{
-		// typed enumだからswitchいらないね！！やったねたえちゃん！
+		// We don't need "switch" statement !! Great,Tae chang!!
 		msf_stream << seq.type;
 		msf_stream << seq.panel_number;
 		msf_stream << seq.time;
