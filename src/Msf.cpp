@@ -4,17 +4,18 @@
 
 using namespace std;
 
-enum SequenceType {
-	Offset,
-	Bpm,
-	Note,
-	Hold,
-	Release,
+// C++11からtyped enumが使えるよ！！やったね！！
+enum SequenceType : char {
+	Offset = 0x0000,
+	Bpm = 0x0001,
+	Note = 0x0002,
+	Hold = 0x0003,
+	Release = 0x0004,
 };
 
 typedef struct {
 	SequenceType type;
-	int panel_number;
+	char panel_number;
 	int time;
 }Sequence;
 
@@ -30,13 +31,29 @@ void Msf::AddSequence(SequenceType type, int panel_number, int time) {
 	this->AddSequence(seq);
 }
 
+void Msf::Save(string filename) {
+	ofstream msf_stream(filename, ios::binary);
+	if (msf_stream.fail()) {
+		throw exception("Stream error");
+	}
+
+	for (Sequence seq: (*this->sequences_))
+	{
+		// typed enumだからswitchいらないね！！やったねたえちゃん！
+		msf_stream << seq.type;
+		msf_stream << seq.panel_number;
+		msf_stream << seq.time;
+	}
+	msf_stream.close();
+}
+
 Msf * Msf::FromFile(string filename) {
 	Msf * msf = new Msf();
 
 	// ファイルを読み込みながら、AddSequenceを使ってMsfオブジェクトに変換する
 	ifstream msf_stream(filename, ios::binary);
 	if (msf_stream.fail()) {
-		throw exception("Can't open file");
+		throw exception("Stream error");
 	}
 
 	// パラメータ読み込み用バッファ
@@ -74,6 +91,7 @@ Msf * Msf::FromFile(string filename) {
 		sequence.time = (int)time;
 		msf->AddSequence(sequence);
 	}
+	msf_stream.close();
 
 	return msf;
 }

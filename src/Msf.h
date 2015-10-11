@@ -11,6 +11,7 @@ public:
 	Msf();
 	void AddSequence(Sequence sequence);
 	void AddSequence(SequenceType type, int panel_number, int time);
+	void Save(std::string filename);
 	static Msf * FromFile(std::string filename);
 	~Msf();
 };
