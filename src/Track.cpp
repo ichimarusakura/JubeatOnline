@@ -6,7 +6,6 @@ Track::Track()
 {
 }
 
-
 Track::~Track()
 {
 }

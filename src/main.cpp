@@ -1,16 +1,23 @@
-
-#include "image_sequence.hpp"
-
 #include <thread>
 #include <iostream>
-
 #include <math.h>
-
+#include    <iomanip>
 #include <SFML/Graphics.hpp>
+#include "image_sequence.hpp"
+#include "Msf.h"
+
 
 int main(void){
 
 	std::cout << "jubeat ONLINE version 0.1\n";
+	try {
+		jubeat_online::Msf msf;
+		msf.AddSequence(jubeat_online::Bpm, 10, 1388);
+		msf.Save("test.msf");
+	} catch (std::exception e) {
+		std::cout << e.what() << std::endl;
+	}
+
 	
 	sf::Vector2i win_pos(1920, -604);
 	sf::RenderWindow window(sf::VideoMode(1080,1920), "jubeat ONLINE ver0.1",sf::Style::None);

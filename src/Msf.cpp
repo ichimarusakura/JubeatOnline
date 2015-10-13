@@ -1,37 +1,24 @@
 #include <iostream>
 #include <fstream>
+#include <winsock.h>
 #include "Msf.h"
 
 using namespace std;
 
-// Since C++11, we can use "typed enum" !
-enum SequenceType : char {
-	Offset = 0x0000,
-	Bpm = 0x0001,
-	Note = 0x0002,
-	Hold = 0x0003,
-	Release = 0x0004,
-};
-
-typedef struct {
-	SequenceType type;
-	char panel_number;
-	int time;
-}Sequence;
-
-Msf::Msf() {
+jubeat_online::Msf::Msf() {
 	this->sequences_ = new vector<Sequence>();
 }
-void Msf::AddSequence(Sequence sequence) {
+
+void jubeat_online::Msf::AddSequence(Sequence sequence) {
 	this->sequences_->push_back(sequence);
 }
 
-void Msf::AddSequence(SequenceType type, int panel_number, int time) {
+void jubeat_online::Msf::AddSequence(SequenceType type, short int panel_number, int time) {
 	Sequence seq = {type, panel_number, time};
 	this->AddSequence(seq);
 }
 
-void Msf::Save(string filename) {
+void jubeat_online::Msf::Save(string filename) {
 	ofstream msf_stream(filename, ios::binary);
 	if (msf_stream.fail()) {
 		throw exception("Stream error");
@@ -39,15 +26,21 @@ void Msf::Save(string filename) {
 
 	for (Sequence seq: (*this->sequences_))
 	{
-		// We don't need "switch" statement !! Great,Tae chang!!
-		msf_stream << seq.type;
-		msf_stream << seq.panel_number;
-		msf_stream << seq.time;
+		// 泥臭いバイトオーダ変換です
+		int32_t buf;
+		buf = htonl(seq.type) >> 16;
+		msf_stream.write((char *)&buf, sizeof(seq.type));
+
+		buf = htonl(seq.panel_number) >> 16;
+		msf_stream.write((char *)&buf, sizeof(seq.panel_number));
+
+		buf = htonl(seq.time);
+		msf_stream.write((char *)&buf, sizeof(seq.time));
 	}
 	msf_stream.close();
 }
 
-Msf * Msf::FromFile(string filename) {
+jubeat_online::Msf * jubeat_online::Msf::FromFile(string filename) {
 	Msf * msf = new Msf();
 
 	// ファイルを読み込みながら、AddSequenceを使ってMsfオブジェクトに変換する
@@ -57,17 +50,17 @@ Msf * Msf::FromFile(string filename) {
 	}
 
 	// パラメータ読み込み用バッファ
-	char * type;
-	char * panel_number;
-	char * time;
-	while (msf_stream.eof()) {
-		msf_stream.read(type, 2);
-		msf_stream.read(panel_number, 2);
-		msf_stream.read(time, 4);
+	int16_t type;
+	int16_t panel_number;
+	int32_t time;
+	// バイトオーダー変換用バッファ
+	char buf;
 
-		// 読み込んだパラメータからシーケンスを生成
+	while (msf_stream.eof()) {
 		Sequence sequence;
-		switch ((int)type) {
+		msf_stream.read(&buf, 2);
+		type = ntohs(buf);
+		switch (type) {
 		case 0x0000:
 			sequence.type = Offset;
 			break;
@@ -83,12 +76,16 @@ Msf * Msf::FromFile(string filename) {
 			throw exception("invalid sequence type");
 		}
 
-		if ((int)panel_number <= 0x0000 || (int)panel_number >= 0x000F) {
+		msf_stream.read(&buf, 2);
+		panel_number = ntohs(buf);
+		if (panel_number <= 0x0000 || panel_number >= 0x000F) {
 			throw exception("invalid panel number");
 		}
+		sequence.panel_number = (panel_number);
 
-		sequence.panel_number = (*panel_number);
-		sequence.time = (int)time;
+		msf_stream.read(&buf, 4);
+		time = ntohl(buf);
+		sequence.time = time;
 		msf->AddSequence(sequence);
 	}
 	msf_stream.close();
@@ -96,6 +93,6 @@ Msf * Msf::FromFile(string filename) {
 	return msf;
 }
 
-Msf::~Msf() {
+jubeat_online::Msf::~Msf() {
 	delete this->sequences_;
 }

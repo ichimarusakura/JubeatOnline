@@ -11,7 +11,7 @@ private:
 	std::string artist_;
 public:
 	Track();
-	PlayData GetEmptyPlayData();
-	PlayData GetBestPlayData();
+	//PlayData * GetEmptyPlayData();
+	//PlayData * GetBestPlayData();
 	~Track();
 };

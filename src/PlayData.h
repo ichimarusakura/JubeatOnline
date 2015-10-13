@@ -8,7 +8,7 @@ private:
 	bool is_finished_;
 	int current_bpm;
 	int shutter_angle_;
-	Track track_;
+	//Track * track_;
 public:
 	PlayData();
 	~PlayData();
