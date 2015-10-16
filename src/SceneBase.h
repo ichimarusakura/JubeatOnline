@@ -9,6 +9,6 @@ namespace jubeat_online {
 		SceneBase();
 		virtual void Init() = 0;
 		virtual void Update(sf::RenderTexture * texture) = 0;
-		~SceneBase();
+		virtual ~SceneBase();
 	};
 };

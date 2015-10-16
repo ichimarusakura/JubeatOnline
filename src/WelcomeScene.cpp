@@ -1,7 +1,6 @@
 #include "WelcomeScene.h"
-
-
-
+#include<iostream>
+using namespace std;
 jubeat_online::WelcomeScene::WelcomeScene()
 {
 }
@@ -31,11 +30,12 @@ void jubeat_online::WelcomeScene::Update(sf::RenderTexture * texture) {
 	}
 
 	if (this->marker_loaded_) {
-		this->marker_->DrawSequence(500, 500, texture);
+		this->marker_->DrawSequence(200, 200, texture);
 	}
 }
 
 jubeat_online::WelcomeScene::~WelcomeScene() {
 	delete this->bg_texture_;
 	delete this->marker_;
+	cout << "destruct scene" << endl;
 }

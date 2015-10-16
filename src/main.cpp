@@ -9,6 +9,13 @@
 #include "WelcomeScene.h"
 
 using namespace jubeat_online;
+using namespace std;
+
+SceneBase * current_scene;
+sf::RenderTexture * scene_texture;
+
+
+void DeleteResources(void);
 
 int main(void){
 
@@ -22,24 +29,27 @@ int main(void){
 	window.setFramerateLimit(30);
 
 
-	sf::RenderTexture * scene_texture = new sf::RenderTexture();
+	scene_texture = new sf::RenderTexture();
 	scene_texture->create(768,1360);  //バッファを作る
 	scene_texture->setSmooth(true);  //スムース設定ON
 
 	// initalize scene
-	SceneBase * current_scene = new WelcomeScene();
+	current_scene = new WelcomeScene();
 	current_scene->Init();
-
+	bool exit = false;
 	//ウインドウが開いている（ゲームループ）
 	while (window.isOpen()) {
 		sf::Event event;
 
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
-				delete current_scene;
-				delete scene_texture;
 				window.close();
+				DeleteResources();
+				exit = true;
 			}
+		}
+		if (exit) {
+			break;
 		}
 
 		// 現在のシーンを更新
@@ -62,4 +72,9 @@ int main(void){
 	}
 
 	return 0;
+}
+
+void DeleteResources() {
+	delete current_scene;
+	delete scene_texture;
 }
