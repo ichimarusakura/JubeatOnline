@@ -24,11 +24,11 @@ namespace jubeat_online {
 	private:
 		std::vector<Sequence> * sequences_;
 	public:
-		Msf();
+		Msf(std::string filename = "");
 		void AddSequence(Sequence sequence);
 		void AddSequence(SequenceType type, short int panel_number, int time);
 		void Save(std::string filename);
-		static Msf * FromFile(std::string filename);
+		void LoadFromFile(std::string filename);
 		~Msf();
 	};
 

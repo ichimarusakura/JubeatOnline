@@ -28,7 +28,7 @@ int main(void){
 	window.setVerticalSyncEnabled(true);
 	window.setFramerateLimit(30);
 
-
+	// シーン描写用のテクスチャ
 	scene_texture = new sf::RenderTexture();
 	scene_texture->create(768,1360);  //バッファを作る
 	scene_texture->setSmooth(true);  //スムース設定ON

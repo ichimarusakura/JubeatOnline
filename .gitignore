@@ -214,8 +214,6 @@ ModelManifest.xml
 DebugLog.txt
 Log.txt
 
-
-lib/*
 JubeatOnline.sln
 JubeatOnline.vcxproj
 JubeatOnline.vcxproj.filters

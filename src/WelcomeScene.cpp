@@ -15,14 +15,14 @@ void jubeat_online::WelcomeScene::Init() {
 
 void jubeat_online::WelcomeScene::Update(sf::RenderTexture * texture) {
 
-		//バッファ画面を黒でクリア
-		texture->clear(sf::Color(0, 0, 0, 255));
+	//バッファ画面を黒でクリア
+	texture->clear(sf::Color(0, 0, 0, 255));
 
-		sf::Sprite graph(*this->bg_texture_);
-		graph.setOrigin(graph.getLocalBounds().width / 2.0f, graph.getLocalBounds().height / 2.0f);
-		graph.setPosition(384, 660);
-		graph.setRotation(-90);
-		texture->draw(graph);
+	sf::Sprite graph(*this->bg_texture_);
+	graph.setOrigin(graph.getLocalBounds().width / 2.0f, graph.getLocalBounds().height / 2.0f);
+	graph.setPosition(384, 660);
+	graph.setRotation(-90);
+	texture->draw(graph);
 
 	if (this->marker_->WaitLoadComplete() == 0 && !this->marker_loaded_) {
 		this->marker_loaded_ = true;
@@ -37,5 +37,4 @@ void jubeat_online::WelcomeScene::Update(sf::RenderTexture * texture) {
 jubeat_online::WelcomeScene::~WelcomeScene() {
 	delete this->bg_texture_;
 	delete this->marker_;
-	cout << "destruct scene" << endl;
 }

@@ -5,8 +5,11 @@
 
 using namespace std;
 
-jubeat_online::Msf::Msf() {
+jubeat_online::Msf::Msf(std::string filename) {
 	this->sequences_ = new vector<Sequence>();
+	if (filename.length() > 0) {
+		this->LoadFromFile(filename);
+	}
 }
 
 void jubeat_online::Msf::AddSequence(Sequence sequence) {
@@ -40,9 +43,7 @@ void jubeat_online::Msf::Save(string filename) {
 	msf_stream.close();
 }
 
-jubeat_online::Msf * jubeat_online::Msf::FromFile(string filename) {
-	Msf * msf = new Msf();
-
+void jubeat_online::Msf::LoadFromFile(string filename) {
 	// ファイルを読み込みながら、AddSequenceを使ってMsfオブジェクトに変換する
 	ifstream msf_stream(filename, ios::binary);
 	if (msf_stream.fail()) {
@@ -86,11 +87,9 @@ jubeat_online::Msf * jubeat_online::Msf::FromFile(string filename) {
 		msf_stream.read(&buf, 4);
 		time = ntohl(buf);
 		sequence.time = time;
-		msf->AddSequence(sequence);
+		this->AddSequence(sequence);
 	}
 	msf_stream.close();
-
-	return msf;
 }
 
 jubeat_online::Msf::~Msf() {

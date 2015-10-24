@@ -1,0 +1,6 @@
+[submodule "lib/inih"]
+	path = lib/inih
+	url = https://github.com/benhoyt/inih.git
+[submodule "lib/sfml"]
+	path = lib/sfml
+	url = https://github.com/SFML/SFML.git
