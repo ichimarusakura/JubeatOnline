@@ -1,85 +1,66 @@
-
-#include "image_sequence.hpp"
-
 #include <thread>
 #include <iostream>
-
 #include <math.h>
-
+#include <iomanip>
 #include <SFML/Graphics.hpp>
+#include "image_sequence.hpp"
+#include "Msf.h"
+#include "SceneBase.h"
+#include "WelcomeScene.h"
+#include "System.h"
+
+using namespace jubeat_online;
+using namespace std;
+
+void DeleteResources(void);
 
 int main(void){
 
 	std::cout << "jubeat ONLINE version 0.1\n";
 	
-	sf::Vector2i win_pos(1920, -604);
-	sf::RenderWindow window(sf::VideoMode(1080,1920), "jubeat ONLINE ver0.1",sf::Style::None);
-	window.setPosition(win_pos);
-	window.setVerticalSyncEnabled(true);
-	window.setFramerateLimit(30);
-	
+	// Open window
+	System::Boot();
 
-
-
-	sf::RenderTexture ScreenBuf;
-	ScreenBuf.create(768,1360);  //バッファを作る
-
-	ScreenBuf.setSmooth(true);  //スムース設定ON
-	
-	sf::Texture Gr;
-	Gr.loadFromFile("media/media.png");
-
-	jubeat_online::ImageSequence marker;
-	marker.LoadDivGraph(25, 5, 5, 230, 230, "media\\shutter.png");
-
-
-	//jubeat_online::ImageSequence is;
-	//is.LoadSequence("media\\wtjp.isf");
-	//is.set_is_repeat(true);
-	
-	int t = 0;
+	// Shutdownしたかどうかのフラグ。なんか嫌だ
+	bool exit = false;
 
 	//ウインドウが開いている（ゲームループ）
-	while (window.isOpen()) {
+	sf::RenderWindow * window = System::GetWindow();
+	while (window->isOpen()) {
 		sf::Event event;
-		while (window.pollEvent(event)) {
-			//「クローズが要求された」イベント：ウインドウを閉じる
-			if (event.type == sf::Event::Closed)
-				window.close();
+
+		while (window->pollEvent(event)) {
+			if (event.type == sf::Event::Closed) {
+				System::ShutDown();
+				exit = true;
+				break;
+			}
+		}
+		if (exit) {
+			break;
 		}
 
-		ScreenBuf.clear(sf::Color(0, 0, 0, 255));  //バッファ画面を黒でクリア
-			
-		sf::Sprite graph(Gr);
-		graph.setOrigin(graph.getLocalBounds().width / 2.0f, graph.getLocalBounds().height / 2.0f);
-		graph.setPosition(384, 660);
-		graph.setRotation(-90);
-		ScreenBuf.draw(graph);
-		//なにか描画
-		
-		if (marker.WaitLoadComplete() == 0 && t == 0) {
-			t = 1;
-			marker.PlaySequence();
+		// シーンが読み込まれていなければWelcomeSceneを。
+		if (System::GetCurrentScene() == NULL) {
+			System::LoadScene(new WelcomeScene());
 		}
+		SceneBase * current_scene = System::GetCurrentScene();
+
+		// シーンをアップデート
+		current_scene->Update();
+		current_scene->display();
+
+		// シーン用スプライトを生成
+		sf::Sprite sprite(System::GetCurrentScene()->getTexture());
+		//sprite.setScale(1080.0f / 768.0f, 1920.0f / 1360.0f);
 		
-		if (t == 1) {
-			marker.DrawSequence(500, 500, &ScreenBuf);
-		}
+		//画面をクリア
+		window->clear();
 		
-
-
-
-		ScreenBuf.display();    //バッファ画面をアップデート
-		sf::Sprite sprite(ScreenBuf.getTexture());  //バッファ画面用のスプライトを作る
-		sprite.setScale(1080.0f / 768.0f, 1920.0f / 1360.0f);
-
-		window.clear();     //画面をクリア
-		
-		window.draw(sprite);    //バッファ画面テクスチャの入ったスプライトを画面に描画
-								//ちなみにsf::SpriteのPositionの初期値は(0,0)です。
-		window.display();   //描画アップデート
-
-		//if (is.WaitLoadComplete() == 0) //std::cout << "end\n";
+		//バッファ画面テクスチャの入ったスプライトを画面に描画
+		//ちなみにsf::SpriteのPositionの初期値は(0,0)です。
+		window->draw(sprite);
+		window->display();
 	}
 
 	return 0;
