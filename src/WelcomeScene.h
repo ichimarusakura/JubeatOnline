@@ -13,7 +13,7 @@ namespace jubeat_online {
 	public:
 		WelcomeScene();
 		void Init();
-		void Update(sf::RenderTexture  * texture);
+		void Update();
 		~WelcomeScene();
 	};
 };

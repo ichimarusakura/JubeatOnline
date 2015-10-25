@@ -217,3 +217,5 @@ Log.txt
 JubeatOnline.sln
 JubeatOnline.vcxproj
 JubeatOnline.vcxproj.filters
+
+lib/*
