@@ -187,7 +187,7 @@ namespace jubeat_online {
 		bool is_repeat(void) const;
 
 		/// <summary>fps‚ğƒZƒbƒg‚µ‚Ü‚·</summary>
-		/// <param name='fps'>İ’è‚·‚éfps</param>
+		/// <param name=""></param>
 		void set_fps(const unsigned int fps);
 
 

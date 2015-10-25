@@ -340,14 +340,11 @@ int jubeat_online::ImageSequence::DrawSequence(sf::RenderTexture* screen_buffer)
 			}
 		}
 
-		if (is_play_ == true) {
-
-			sf::Sprite graph(images_[now_frame_]);
-			graph.setOrigin(graph.getLocalBounds().width / 2.0f, graph.getLocalBounds().height / 2.0f);
-			graph.setPosition(x_, y_);
-			graph.setScale(exrate_, exrate_);
-			screen_buffer->draw(graph);
-		}
+		sf::Sprite graph(images_[now_frame_]);
+		graph.setOrigin(graph.getLocalBounds().width / 2.0f, graph.getLocalBounds().height / 2.0f);
+		graph.setPosition(x_, y_);
+		graph.setScale(exrate_, exrate_);
+		screen_buffer->draw(graph);
 
 		return now_frame_;
 	}
